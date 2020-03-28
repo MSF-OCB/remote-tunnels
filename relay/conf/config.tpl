@@ -2,7 +2,7 @@ Host *
 #StrictHostKeyChecking no
 #UserKnownHostsFile /dev/null
 ServerAliveInterval 240
-IdentityFile ~/.ssh/unifield
+IdentityFile ~/.ssh/${sshkey}
 
 Host msfrelay2
 #15.188.17.148
