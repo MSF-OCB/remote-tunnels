@@ -32,3 +32,4 @@ do
 done
 mkdir $batchName/key_pairs
 mv $batchName/${location}_key* $batchName/key_pairs
+tar -czf  $batchName/key_pairs.tgz $batchName/key_pairs && rm -rf $batchName/key_pairs
