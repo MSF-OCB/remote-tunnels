@@ -19,7 +19,7 @@ ForwardAgent yes
 Host ${location} ${location}2
 HostName localhost
 Port $port_location
-User unifield
+User ${userlogin}
 ProxyJump msfrelay2
 IdentitiesOnly yes
 DynamicForward 9006
@@ -27,7 +27,7 @@ DynamicForward 9006
 Host ${location}1 
 HostName localhost
 Port $port_location
-User unifield
+User User ${userlogin}
 ProxyJump msfrelay1
 IdentitiesOnly yes
 DynamicForward 9006
