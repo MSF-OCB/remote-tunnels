@@ -22,7 +22,7 @@ do
     rm  $batchName/relay_${location}_key_${num}/*.tpl
     rm  $batchName/relay_${location}_key_${num}/conf/*.tpl
     echo "key_$num;$p;${location};;">>$batchName/${batchName}_index.csv
-    echo `cat $f.pub`>>$batchName/pub_keys_to_add_to_unifield
+    echo `cat $f.pub`>>$batchName/${batchName}_pub_keys_to_add_to_unifield
     cp $f $batchName/relay_${location}_key_${num}/conf/.
     echo generated $i $location key $num
     cd $batchName
@@ -30,6 +30,6 @@ do
     rm -rf relay_${location}_key_${num}
     cd ..
 done
-mkdir $batchName/key_pairs
-mv $batchName/${location}_key* $batchName/key_pairs
-tar -czf  $batchName/key_pairs.tgz $batchName/key_pairs && rm -rf $batchName/key_pairs
+mkdir $batchName/${batchName}_key_pairs
+mv $batchName/${location}_key* $batchName/${batchName}_key_pairs
+tar -czf  $batchName/${batchName}_key_pairs.tgz $batchName/${batchName}_key_pairs && rm -rf $batchName/${batchName}_key_pairs
