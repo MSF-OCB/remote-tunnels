@@ -27,7 +27,7 @@ DynamicForward 9006
 Host ${location}1 
 HostName localhost
 Port $port_location
-User User ${userlogin}
+User ${userlogin}
 ProxyJump msfrelay1
 IdentitiesOnly yes
 DynamicForward 9006
