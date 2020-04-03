@@ -13,7 +13,7 @@ fi
 proxy_port=9006
 known_hosts_file="./.known_hosts"
 
-curl -L https://github.com/msf-ocb/remote-tunnels/raw/master/known_hosts -o ${known_hosts_file}
+curl -L https://github.com/msf-ocb/remote-tunnels/raw/master/remote/known_hosts -o ${known_hosts_file}
 
 echo    "Connecting to project ${location}..."
 echo    "You may be asked twice for the password - this is OK"
