@@ -22,13 +22,12 @@ do
     ssh-keygen -qa 100 -t ed25519 -N $p -C "${userlogin} key_$num" -f ./$f
     cp -r ./relay $batchName/relay_${location}_key_${num}
     export sshkey=${location}_key_${num}
-    envsubst <$batchName/relay_${location}_key_${num}/conf/config.tpl >$batchName/relay_${location}_key_${num}/conf/config
     envsubst <$batchName/relay_${location}_key_${num}/tunnel.sh.tpl >$batchName/relay_${location}_key_${num}/tunnel.sh
-    rm  $batchName/relay_${location}_key_${num}/*.tpl
-    rm  $batchName/relay_${location}_key_${num}/conf/*.tpl
+    rm $batchName/relay_${location}_key_${num}/*.tpl
     echo "key_$num;$p;${location};;">>$batchName/${batchName}_index.csv
     echo `cat $f.pub`>>$batchName/${userlogin}
-    cp $f $batchName/relay_${location}_key_${num}/conf/.
+    mkdir -p $batchName/relay_${location}_key_${num}/tunnel_data/
+    cp $f $batchName/relay_${location}_key_${num}/tunnel_data/.
     echo generated $i $location key $num
     cd $batchName
     zip --exclude=*.DS_Store* -rmq  relay_${location}_key_${num}.zip relay_${location}_key_${num}
@@ -46,3 +45,4 @@ echo "- add ${userlogin}.enable = true; to the users.users object @org-spec/host
 echo "- add ${userlogin} = tunnelOnly; to org-spec/ocb_users.nix"
 echo "- commit, push,pull and nixos-rebuild in the relays and benuc ${port_location}"
 echo "- Add the keys to keeper"
+
