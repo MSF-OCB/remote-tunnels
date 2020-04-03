@@ -28,6 +28,7 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
     ssh -q -T -N \
         -D "${proxy_port}" \
         -i "${key_file}" \
+        -F /dev/null
         -o "ExitOnForwardFailure=yes" \
         -o "ServerAliveInterval=10" \
         -o "ServerAliveCountMax=5" \
