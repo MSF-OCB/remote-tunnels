@@ -34,7 +34,7 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
         -o "ServerAliveCountMax=5" \
         -o "ConnectTimeout=360" \
         -o "UserKnownHostsFile=${known_hosts_file}" \
-        -J "tunneller@${relay}:${port}" \
+        -o "ProxyCommand=ssh -W %h:%p ${relay} -p ${port} -i ${key_file}" \
         -p "${dest_port}" \
         "${user}@localhost"
 
