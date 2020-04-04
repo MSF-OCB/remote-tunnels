@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-trap ctrl_c INT
+trap ctrl_c SIGINT
 
 function ctrl_c() {
   echo "Trapped Ctrl-C, exiting"
