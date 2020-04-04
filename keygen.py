@@ -1,16 +1,17 @@
 #! /usr/bin/env python
 
 import argparse
-from dataclasses import dataclass
-from functools import reduce
-from itertools import repeat, chain
 import os
 import secrets
 import string
 import subprocess
+import tarfile
 import time
 import zipfile
-import tarfile
+
+from dataclasses import dataclass
+from functools   import reduce
+from itertools   import repeat, chain
 
 @dataclass(frozen=True)
 class KeyData:
