@@ -30,11 +30,16 @@ class KeyData:
     return f"relay_{self.msf_location}_{key_id}"
 
 def args_parser():
+  def_key_amount=5
   parser = argparse.ArgumentParser(description='Generate keys and launch script for SSH tunnels.')
-  parser.add_argument('-l', '--location', type=str, required=True,             dest='msf_location')
-  parser.add_argument('-p', '--port',     type=int, required=True,             dest='port')
-  parser.add_argument('-n', '--num',      type=int, required=False, default=5, dest='amount')
-  parser.add_argument('-u', '--user',     type=str, required=False,            dest='user')
+  parser.add_argument('-l', '--location', type=str, required=True,  dest='msf_location',
+                      help="The location of the MSF project, e.g. be_bruxelles")
+  parser.add_argument('-p', '--port',     type=int, required=True,  dest='port',
+                      help="The tunnel port of the remote server to which this key gives access, e.g. 6002")
+  parser.add_argument('-n', '--num',      type=int, required=False, dest='amount', default=def_key_amount, 
+                      help=f"The amount of keys to generate, defaults to {def_key_amount}")
+  parser.add_argument('-u', '--user',     type=str, required=False, dest='user',
+                      help="The user that will be used to connect with the generated keys, defaults to \"uf_<location>\"")
   return parser
 
 def generate_passwd():
