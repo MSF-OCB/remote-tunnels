@@ -1,17 +1,17 @@
 ## Generation of a batch of relay keys with passphrases per location
 ### Usage
 
-> ./keygen.bash *location* *port_location* *amount*
+`./keygen.py -l <location> -p <port> -n <amount>`
 
->./keygen.bash karachi 6020 10
+`./keygen.py -l karachi -p 6020 -n 10`
 
- - Location: no spaces or weird chars in Location name
- - Port_location refer to the port in the relay
- - Default amount is 5 keys
+ * Location: no spaces or weird chars in location name
+ * Port_location refer to the port in the relay
+ * Default amount is 5 keys
 
 A batch is a folder that contains:
- - *batch_karachi_1585400011_index.csv* : a CSV file with (initial) generated passphrase. This file to be converted to.xlsx and shared online with the key dispatchers. 1 key = 1 user
- - *pub_keys_to_add_to_unifield* : a list of public keys to be added to an authorized relay user (here user unifiled) - Once added, the relay(s) and the related nuc or reverse tunnel providers should be updated
+ - *batch_karachi_1585400011_index.csv* : a CSV file with (initial) generated passphrase. This file is to be converted to.xlsx and shared online with the key dispatchers. 1 key = 1 user
+ - *pub_keys_to_add_to_unifield* : a list of public keys to be added to an authorized relay user. Once added, the relay(s) and the related nuc or reverse tunnel providers should be updated
 - *relay_karachi_key_1585400012.zip ...* a list of zip folders that contains the configuration to be deployed on end user machine (see article) 
 - *key_pairs.tgz* : an archived zip folder that contains all key pairs
 
