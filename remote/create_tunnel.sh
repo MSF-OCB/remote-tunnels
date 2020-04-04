@@ -1,8 +1,8 @@
 #! /usr/bin/env bash
 
-trap ctrl_c SIGINT
-trap ctrl_c SIGHUP
-function ctrl_c() {
+trap cleanup SIGINT
+trap cleanup SIGHUP
+function cleanup() {
   rm -rf "${tmp_dir}"
   exit 1
 }
