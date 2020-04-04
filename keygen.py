@@ -92,8 +92,8 @@ def get_tunnel_script(data, key_id, key):
 umask 0077
 
 trap ctrl_c SIGINT
+trap ctrl_c SIGHUP
 function ctrl_c() {{
-  echo "Trapped Ctrl-C, exiting"
   rm -rf "${{tmp_dir}}"
   exit 1
 }}
