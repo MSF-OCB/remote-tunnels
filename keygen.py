@@ -22,10 +22,10 @@ class KeyData:
   epoch_time:   int = int(time.time())
 
   def batch_name(self):
-    return "batch_" + self.msf_location + "_" + str(self.epoch_time)
+    return f"batch_{self.msf_location}_{self.epoch_time}"
 
   def key_id(self, num):
-    return f"key_{str(self.epoch_time)}{str(num)}"
+    return f"key_{self.epoch_time}{num}"
 
   def key_file_name(self, key_id):
     return f"relay_{self.msf_location}_{key_id}"
