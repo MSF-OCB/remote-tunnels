@@ -73,14 +73,19 @@ def get_tunnel_script(user, port, key_id, key):
     return f"""#! /usr/bin/env bash
 umask 0077
 
+trap ctrl_c SIGINT
+function ctrl_c() {{
+  echo "Trapped Ctrl-C, exiting"
+  rm -rf "${{tmp_dir}}"
+  exit 1
+}}
+
 tmp_dir=$(mktemp -d)
 cat <<EOF > "${{tmp_dir}}/{key_id}"
 {key}
 EOF
 
 curl -L https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh | bash -s -- "{user}" "${{tmp_dir}}/{key_id}" "{port}"
-
-rm -rf "${{tmp_dir}}"
 """
 
 def write_files(user, batch_name, csvs, pub_keys, files):
