@@ -91,9 +91,8 @@ def get_tunnel_script(data, key_id, key):
     return f"""#! /usr/bin/env bash
 umask 0077
 
-trap ctrl_c SIGINT
-trap ctrl_c SIGHUP
-function ctrl_c() {{
+trap cleanup SIGINT SIGHUP
+function cleanup() {{
   rm -rf "${{tmp_dir}}"
   exit 1
 }}
