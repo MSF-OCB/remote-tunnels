@@ -107,7 +107,7 @@ curl --connect-timeout 90 \\
      --retry 5 \\
      --location \\
      https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh | \\
-  bash -s -- "{data.user}" "${{key_file}}" "{data.port}"
+  bash -s -- "{data.user}" "${{key_file}}" "{data.port}" "${{tmp_dir}}"
 """
 
 def write_files(data, csvs, pub_keys, files):
