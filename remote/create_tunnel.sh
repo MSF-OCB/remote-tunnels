@@ -1,7 +1,6 @@
 #! /usr/bin/env bash
 
-trap cleanup SIGINT
-trap cleanup SIGHUP
+trap cleanup SIGINT SIGHUP
 function cleanup() {
   rm -rf "${tmp_dir}"
   exit 1
