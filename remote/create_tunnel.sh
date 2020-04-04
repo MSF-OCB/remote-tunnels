@@ -22,12 +22,18 @@ proxy_port=9006
 tmp_dir=$(mktemp -d)
 known_hosts_file="${tmp_dir}/known_hosts"
 
-curl -L https://github.com/msf-ocb/remote-tunnels/raw/master/remote/known_hosts -o ${known_hosts_file}
+curl --connect-timeout 90 \
+     --retry 5 \
+     --location \
+     --output ${known_hosts_file} \
+     https://github.com/msf-ocb/remote-tunnels/raw/master/remote/known_hosts
 
-echo    "Connecting to project ${location}..."
+echo -e "\nConnecting to project..."
 echo    "You may be asked twice for the password - this is OK"
 echo    "After the second password nothing will happen - this is OK"
 echo -e "You will be tunnelled until you close this window\n"
+
+echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}\n"
 
 for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
   for port in 22 80 443; do
