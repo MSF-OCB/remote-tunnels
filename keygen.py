@@ -99,11 +99,16 @@ function ctrl_c() {{
 }}
 
 tmp_dir=$(mktemp -d)
-cat <<EOF > "${{tmp_dir}}/{key_id}"
+key_file="${{tmp_dir}}"/{data.msf_location}_{key_id}
+cat <<EOF > "${{key_file}}"
 {key}
 EOF
 
-curl -L https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh | bash -s -- "{data.user}" "${{tmp_dir}}/{key_id}" "{data.port}"
+curl --connect-timeout 90 \\
+     --retry 5 \\
+     --location \\
+     https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh | \\
+  bash -s -- "{data.user}" "${{key_file}}" "{data.port}"
 """
 
 def write_files(data, csvs, pub_keys, files):
