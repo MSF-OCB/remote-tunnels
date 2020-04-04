@@ -1,5 +1,13 @@
 #! /usr/bin/env bash
 
+trap ctrl_c INT
+
+function ctrl_c() {
+  echo "Trapped Ctrl-C, exiting"
+  rm -rf "${tmp_dir}"
+  exit 1
+}
+
 user="${1}"
 key_file="${2}"
 dest_port="${3}"
@@ -39,7 +47,7 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
         -p "${dest_port}" \
         "${user}@localhost"
 
-    if [[ $? -eq 0 ]]; then
+    if [ $? -eq 0 ]; then
       exit 0
     else
       echo -e "\nConnection failed, retrying."
@@ -48,5 +56,4 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
   done
 done
 
-rm -rf "${tmp_dir}"
 
