@@ -1,9 +1,8 @@
 #! /usr/bin/env bash
 
 trap ctrl_c SIGINT
-
+trap ctrl_c SIGHUP
 function ctrl_c() {
-  echo "Trapped Ctrl-C, exiting"
   rm -rf "${tmp_dir}"
   exit 1
 }
