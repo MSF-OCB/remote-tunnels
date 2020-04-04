@@ -10,9 +10,8 @@ if [ -z "${user}" ] || [ -z "${key_file}" ] || [ -z "${dest_port}" ]; then
   exit 1
 fi
 
-tmp_dir=$(mktemp -d)
-
 proxy_port=9006
+tmp_dir=$(mktemp -d)
 known_hosts_file="${tmp_dir}/known_hosts"
 
 curl -L https://github.com/msf-ocb/remote-tunnels/raw/master/remote/known_hosts -o ${known_hosts_file}
