@@ -128,8 +128,8 @@ def print_info(data):
   print( "@nixos repo, do not forget to:")
   print(f"- copy (or add the content of) {data.user} to org-spec/keys")
   print(f"- add {data.user}.enable = true; to the users.users object @org-spec/hosts/benucXXX.nix (port={data.port})")
-  print( "- add {data.user} = tunnelOnly; to org-spec/ocb_users.nix")
-  print( "- commit, push,pull and nixos-rebuild in the relays and benuc {data.port}")
+  print(f"- add {data.user} = tunnelOnly; to org-spec/ocb_users.nix")
+  print(f"- commit, push,pull and nixos-rebuild in the relays and benuc {data.port}")
   print( "- Add the keys to keeper")
 
 def go():
