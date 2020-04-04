@@ -91,7 +91,7 @@ def get_tunnel_script(data, key_id, key):
     return f"""#! /usr/bin/env bash
 umask 0077
 
-trap cleanup SIGINT SIGHUP
+trap cleanup SIGINT
 function cleanup() {{
   rm -rf "${{tmp_dir}}"
   exit 1
