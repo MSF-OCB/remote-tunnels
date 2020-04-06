@@ -59,6 +59,7 @@ def concat3(t1, t2):
 
 # Returns a 3-tuple containing the CSV line, the pub key content, and the paths to both key files
 def generate_key(data, num):
+  print(f"generating key {num} of {data.amount}", flush=True)
   passwd   = generate_passwd()
   key_id   = data.key_id(num)
   key_file = os.path.join(data.batch_name(), data.key_file_name(key_id))
