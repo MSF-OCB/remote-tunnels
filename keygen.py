@@ -51,9 +51,8 @@ def to_csv(length, *strings):
   return ';'.join(list(chain(strings, repeat("", length)))[0:length]) + '\n'
 
 def generate_keys(data,):
-  return reduce(concat3,
-                map(lambda num: generate_key(data, num),
-                    range(1, data.amount + 1)))
+  return reduce(concat3, map(lambda num: generate_key(data, num),
+                             range(1, data.amount + 1)))
 
 def concat3(t1, t2):
   return (t1[0] + t2[0], t1[1] + t2[1], t1[2] + t2[2])
