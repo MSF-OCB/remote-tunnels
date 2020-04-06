@@ -129,10 +129,10 @@ def tar_files(tar_file_name, *files):
 def print_info(data):
   print(f"\nCreated batch: {data.batch_name()}\n")
   print( "@nixos repo, do not forget to:")
-  print(f"- copy (or add the content of) {data.user} to org-spec/keys")
-  print(f"- add {data.user}.enable = true; to the users.users object @org-spec/hosts/benucXXX.nix (port={data.port})")
-  print(f"- add {data.user} = tunnelOnly; to org-spec/ocb_users.nix")
-  print(f"- commit, push,pull and nixos-rebuild in the relays and benuc {data.port}")
+  print(f"- Copy (or add the content of) {data.user} to org-spec/keys")
+  print(f"- Add {data.user}.enable = true; to the users.users object @org-spec/hosts/benucXXX.nix (port={data.port})")
+  print(f"- Add {data.user} = tunnelOnly; to org-spec/ocb_users.nix")
+  print(f"- Commit, push,pull and nixos-rebuild in the relays and benuc {data.port}")
   print( "- Add the keys to keeper")
 
 def go():
