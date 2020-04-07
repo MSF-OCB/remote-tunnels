@@ -7,7 +7,6 @@ import string
 import subprocess
 import tarfile
 import time
-import zipfile
 
 from dataclasses import dataclass
 from functools   import reduce
@@ -64,7 +63,7 @@ def generate_key(data, num):
   key_id   = data.key_id(num)
   key_file = os.path.join(data.batch_name(), data.key_file_name(key_id))
   do_generate_key(data.user, passwd, key_file, key_id)
-  write_tunnel_zip(data, key_id, key_file)
+  write_tunnel_script(data, key_id, key_file)
   return (to_csv(5, key_id, passwd, data.msf_location),
           read_pub_key(key_file),
           [key_file, f"{key_file}.pub"])
@@ -81,13 +80,12 @@ def do_generate_key(user, passwd, filename, key_id):
                                 "-C", f"{user}_{key_id}",
                                 "-f", filename])
 
-def write_tunnel_zip(data, key_id, key_file):
+def write_tunnel_script(data, key_id, key_file):
+  script_name = os.path.join(data.batch_name(), f"tunnel_{key_id}.sh")
   with open(key_file, 'r') as f:
-    script = get_tunnel_script(data, key_id, f.read())
-  with zipfile.ZipFile(f"{key_file}.zip", 'w', zipfile.ZIP_DEFLATED) as zf:
-    zf.writestr(os.path.join(f"{data.msf_location}_{key_id}", f"tunnel.sh"), script)
+    write_lines(script_name, tunnel_script(data, key_id, f.read()))
 
-def get_tunnel_script(data, key_id, key):
+def tunnel_script(data, key_id, key):
     return f"""#! /usr/bin/env bash
 umask 0077
 
@@ -133,7 +131,7 @@ def print_info(data):
   print(f"- Copy (or add the content of) {data.user} to org-spec/keys")
   print(f"- Add {data.user}.enable = true; to the users.users object @org-spec/hosts/benucXXX.nix (port={data.port})")
   print(f"- Add {data.user} = tunnelOnly; to org-spec/ocb_users.nix")
-  print(f"- Commit, push,pull and nixos-rebuild in the relays and benuc {data.port}")
+  print(f"- Commit, push, pull and nixos-rebuild on the remote server {data.port}")
   print( "- Add the keys to keeper")
 
 def go():
@@ -146,5 +144,6 @@ def go():
   list(map(os.remove, key_files))
   print_info(data)
 
-go()
+if __name__ == "__main__":
+  go()
 
