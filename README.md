@@ -1,13 +1,30 @@
 ## Generation of a batch of relay keys with passphrases per location
 ### Usage
+```
+usage: - [-h] -l MSF_LOCATION -s HOST [-n AMOUNT] [-u USER]
+         [--dry-run DRY_RUN]
 
-`./keygen.py -l <location> -p <port> -n <amount>`
+Generate keys and launch script for SSH tunnels.
 
-`./keygen.py -l karachi -p 6020 -n 10`
+optional arguments:
+  -h, --help            show this help message and exit
+  -l MSF_LOCATION, --location MSF_LOCATION
+                        The location of the MSF project, e.g. be_bruxelles
+  -s HOST, --server HOST
+                        The remote server to which this key will give access,
+                        e.g. benuc002
+  -n AMOUNT, --num AMOUNT
+                        The amount of keys to generate, defaults to 5
+  -u USER, --user USER  The user that will be used to connect with the
+                        generated keys, defaults to "uf_<location>"
+  --dry-run DRY_RUN
+```
+Example usage:
+```
+curl -L https://github.com/MSF-OCB/remote-tunnels/raw/master/keygen.py | python - -l be_bruxelles -s benuc002 -n 3
+```
 
- * Location: no spaces or weird chars in location name
- * Port_location refer to the port in the relay
- * Default amount is 5 keys
+# Information below needs to be updated
 
 A batch is a folder that contains:
  - *batch_karachi_1585400011_index.csv* : a CSV file with (initial) generated passphrase. This file is to be converted to.xlsx and shared online with the key dispatchers. 1 key = 1 user
