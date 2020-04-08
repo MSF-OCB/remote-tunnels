@@ -159,7 +159,8 @@ def commit_nixos_config(data, rel_users_path, rel_key_path):
   subprocess.run(["git", "-C", data.repo_path(),
                          "commit",
                          "--author", "MSFOCB keygen script <msfocb_keygen@ocb.msf.org>",
-                         "--message", f"Commit keygen changes, batch id {data.batch_name()}"])
+                         "--message", f"Commit keygen changes, batch id {data.batch_name()}",
+                         "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
   subprocess.run(["git", "-C", data.repo_path(), "pull", "--rebase"])
   subprocess.run(["git", "-C", data.repo_path(), "push", "--dry-run" if data.dry_run else ""])
 
