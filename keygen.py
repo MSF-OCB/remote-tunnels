@@ -140,18 +140,28 @@ def tar_files(tar_file_name, *files):
 
 def update_nixos_config(data, pub_keys):
   rel_users_path = os.path.join("org-spec", "json", "users.json")
+  update_nixos_users(data, rel_users_path)
+
+  rel_key_path = os.path.join("org-spec", "keys", data.user)
+  update_nixos_keys(data, rel_key_path, pub_keys)
+
+  commit_nixos_config(data, rel_users_path, rel_key_path)
+
+def update_nixos_users(data, rel_users_path):
   users_path = os.path.join(data.repo_path(), rel_users_path)
   with open(users_path, 'r') as f:
     users = json.load(f)
   ensure_present(data.user, users["users"]["tunnel_only"]).sort()
-  ensure_present(data.user, users["users"]["per-host"][data.host]["enable"]).sort()
+  per_host = users["users"]["per-host"]
+  per_host.setdefault(data.host, dict()).setdefault("enable", list())
+  ensure_present(data.user, per_host[data.host]["enable"]).sort()
   with open(users_path, 'w') as f:
     json.dump(users, f, indent=2)
-  rel_key_path = os.path.join("org-spec", "keys", data.user)
-  key_path = os.path.join(data.repo_path(), rel_users_path)
+
+def update_nixos_keys(data, rel_key_path, pub_keys):
+  key_path = os.path.join(data.repo_path(), rel_key_path)
   with open(key_path, 'a+') as f:
-    f.write(*pub_keys)
-  commit_nixos_config(data, rel_users_path, rel_key_path)
+    list(map(f.write, pub_keys))
 
 def commit_nixos_config(data, rel_users_path, rel_key_path):
   subprocess.run(["git", "-C", data.repo_path(),
@@ -174,9 +184,7 @@ def clone_nixos(data):
 
 def print_info(data):
   print(f"\nCreated batch: {data.batch_name()}\n")
-  print( "Do not forget to:")
-  print(f"- Run nixos-rebuild on the remote server {data.host}")
-  print( "- Add the keys to keeper")
+  print( "Do not forget to add the keys to keeper!\n")
 
 def go():
   args = args_parser().parse_args()
@@ -184,14 +192,13 @@ def go():
 
   os.mkdir(data.batch_name())
   clone_nixos(data)
-
   (csvs, pub_keys, key_files) = generate_keys(data)
   write_files(data, csvs, pub_keys, key_files)
   update_nixos_config(data, pub_keys)
-
   list(map(os.remove, key_files))
   print_info(data)
 
 if __name__ == "__main__":
   go()
+
 
