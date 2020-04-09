@@ -175,7 +175,7 @@ def commit_nixos_config(data, rel_users_path, rel_key_path):
                          "--message", f"Commit keygen changes, batch id {data.batch_name()}",
                          "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
   subprocess.run(["git", "-C", data.repo_path(), "pull", "--rebase"])
-  subprocess.run(["git", "-C", data.repo_path(), "push", "--dry-run" if data.dry_run else ""])
+  subprocess.run(["git", "-C", data.repo_path(), "push"] + (["--dry-run"] if data.dry_run else []))
 
 def ensure_present(x, xs):
   if x not in xs:
