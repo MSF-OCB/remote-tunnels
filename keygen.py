@@ -39,7 +39,9 @@ class KeyData:
       raise FileNotFoundError("NixOS repo not cloned!")
     with open(os.path.join(self.repo_path(), "org-spec", "json", "tunnels.json"), 'r') as f:
       tunnels = json.load(f)
-    return tunnels["tunnels"]["per-host"][self.host]["remote_forward_port"]
+    per_host = tunnels["tunnels"]["per-host"]
+    assert self.host in per_host, f"The host name {self.host} is not defined in tunnels.json, exiting."
+    return per_host[self.host]["remote_forward_port"]
 
 def args_parser():
   def_key_amount=5
