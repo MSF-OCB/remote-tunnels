@@ -1,5 +1,23 @@
 ## Generation of a batch of relay keys with passphrases per location
-### Usage
+### Installation
+1. Install the latest version of Python (at the time of writing, that is [version 3.8.2](https://www.python.org/ftp/python/3.8.2/python-3.8.2-amd64-webinstall.exe))
+2. Download the file `keygen.sh` from this repo and put it on your local hard disk with the same name.
+3. From within Git Bash, go to the directory in which you put the `keygen.sh` file (using the `cd` command) and run `chmod +x keygen.sh` to make the file executable
+4. Add the following entry to your `.ssh/config` file to be able to connect to github using ssh:
+```
+Host github.com
+  HostName ssh.github.com
+  User git
+  Port 443
+```
+
+### Running the script
+Example usage, from within the directory containing `keygen.sh`:
+```
+./keygen.sh -l be_bruxelles -s benuc002 -n 3
+```
+
+Full usage information:
 ```
 usage: keygen.sh [-h] -l MSF_LOCATION -s HOST [-n AMOUNT] [-u USER] [--dry-run]
 
@@ -12,10 +30,6 @@ optional arguments:
   -n AMOUNT, --num AMOUNT                  The amount of keys to generate, defaults to 5
   -u USER, --user USER                     The user that will be used to connect, defaults to "uf_<location>"
   --dry-run                                Run the script without making any changes to github
-```
-Example usage:
-```
-./keygen.sh -l be_bruxelles -s benuc002 -n 3
 ```
 
 # Information below needs to be updated
