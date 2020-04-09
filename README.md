@@ -7,11 +7,11 @@ Generate keys and launch script for SSH tunnels.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -l MSF_LOCATION, --location MSF_LOCATION  The location of the MSF project, e.g. be_bruxelles
-  -s HOST, --server HOST                    The remote server to which this key will give access, e.g. benuc002
-  -n AMOUNT, --num AMOUNT                   The amount of keys to generate, defaults to 5
-  -u USER, --user USER                      The user that will be used to connect with the generated keys, defaults to "uf_<location>"
-  --dry-run                                 Run the script without making any changes to github
+  -l MSF_LOCATION, --location MSF_LOCATION The location of the MSF project, e.g. be_bruxelles
+  -s HOST, --server HOST                   The remote server to which this key will give access, e.g. benuc002
+  -n AMOUNT, --num AMOUNT                  The amount of keys to generate, defaults to 5
+  -u USER, --user USER                     The user that will be used to connect, defaults to "uf_<location>"
+  --dry-run                                Run the script without making any changes to github
 ```
 Example usage:
 ```
