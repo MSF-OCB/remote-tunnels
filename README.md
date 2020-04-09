@@ -2,7 +2,7 @@
 ### Installation
 1. Install the latest version of Python (at the time of writing, that is [version 3.8.2](https://www.python.org/ftp/python/3.8.2/python-3.8.2-amd64-webinstall.exe))
 2. Download the file `keygen.sh` from this repo and put it on your local hard disk with the same name.
-3. From within Git Bash, go to the directory in which you put the `keygen.sh` file (using the `cd` command) and run `chmod +x keygen.sh` to make the file executable
+3. From within Git Bash, go to the directory in which you put the `keygen.sh` file (using the `cd` command) and run`chmod +x keygen.sh` to make the file executable
 4. Add your public ssh key to your github profile by clicking on your profile picture in the top right corner, choosing settings, going to "SSH and GPG keys", and using the green button that says "New SSH key"
 5. Add the following entry to your `.ssh/config` file to be able to connect to github using ssh:
 ```
@@ -38,7 +38,7 @@ optional arguments:
   -l MSF_LOCATION, --location MSF_LOCATION The location of the MSF project, e.g. be_bruxelles
   -s HOST, --server HOST                   The remote server to which this key will give access, e.g. benuc002
   -n AMOUNT, --num AMOUNT                  The amount of keys to generate, defaults to 5
-  -u USER, --user USER                     The user that will be used to connect, defaults to "uf_<location>"
+  -u USER, --user USER                     The user that will be used to connect, defaults to "uf_<msf_location>"
   --dry-run                                Run the script without making any changes to github
 ```
 
