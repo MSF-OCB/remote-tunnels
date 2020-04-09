@@ -13,7 +13,9 @@ Host github.com
 ```
 
 Please test the connection to github before proceeding with the script below. To do so, run
-```ssh -T github.com```
+```
+ssh -T github.com
+```
 and you should get a message saying
 ```
 Hi <username>! You've successfully authenticated, but GitHub does not provide shell access.
