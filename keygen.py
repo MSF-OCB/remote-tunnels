@@ -159,7 +159,7 @@ def update_nixos_users(data, rel_users_path):
   per_host.setdefault(data.host, dict()).setdefault("enable", list())
   ensure_present(data.user, per_host[data.host]["enable"]).sort()
   with open(users_path, 'w') as f:
-    json.dump(users, f, indent=2)
+    json.dump(users, f, indent=2, sort_keys=True)
 
 def update_nixos_keys(data, rel_key_path, pub_keys):
   key_path = os.path.join(data.repo_path(), rel_key_path)
@@ -174,8 +174,12 @@ def commit_nixos_config(data, rel_users_path, rel_key_path):
                          "--author", "MSFOCB keygen script <msfocb_keygen@ocb.msf.org>",
                          "--message", f"Commit keygen changes, batch id {data.batch_name()}",
                          "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
-  subprocess.run(["git", "-C", data.repo_path(), "pull", "--rebase"])
-  subprocess.run(["git", "-C", data.repo_path(), "push"] + (["--dry-run"] if data.dry_run else []))
+  if (input("Push changes to github? (Type \"yes\" to confirm.) ") == "yes"):
+    print("Pushing changes to github.", flush=True)
+    subprocess.run(["git", "-C", data.repo_path(), "pull", "--rebase"])
+    subprocess.run(["git", "-C", data.repo_path(), "push"] + (["--dry-run"] if data.dry_run else []))
+  else:
+    print("User cancelled the operation, not pushing changes to github.", flush=True)
 
 def ensure_present(x, xs):
   if x not in xs:
