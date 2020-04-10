@@ -24,11 +24,10 @@ fi
 proxy_port=9006
 known_hosts_file="${tmp_dir}/known_hosts"
 
-curl --connect-timeout 90 \
-     --retry 5 \
-     --location \
-     --output ${known_hosts_file} \
-     https://github.com/msf-ocb/remote-tunnels/raw/master/remote/known_hosts
+cat <<EOF > "${known_hosts_file}"
+sshrelay1.msf.be,185.199.180.11                                       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC0ynb9uL4ZD2qT/azc79uYON73GsHlvdyk8zaLY/gHq
+sshrelay2.msf.be,15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf
+EOF
 
 echo -e "\nConnecting to project..."
 echo    "You may be asked twice for the password - this is OK"
@@ -50,8 +49,14 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
         -o "ServerAliveInterval=10" \
         -o "ServerAliveCountMax=5" \
         -o "ConnectTimeout=360" \
-        -o "UserKnownHostsFile=${known_hosts_file}" \
-        -o "ProxyCommand=ssh -W %h:%p -p ${port} -i ${key_file} tunneller@${relay}" \
+        -o "StrictHostKeyChecking=no" \
+        -o "UserKnownHostsFile=/dev/null" \
+        -o "ProxyCommand=ssh -W %h:%p \
+                             -i ${key_file} \
+                             -o StrictHostKeyChecking=yes \
+                             -o UserKnownHostsFile=${known_hosts_file} \
+                             -p ${port} \
+                             tunneller@${relay}" \
         -p "${dest_port}" \
         "${user}@localhost"
 
