@@ -77,33 +77,4 @@ All these files should be added to a keeper record.
 -   Once the tunnel is established, a socks5 proxy should be configured in the browser. I recommend to do that in firefox. This is just a setup do do once, and then enable /disable when needed
 
 ### installation on end-user windows machine
--   On the user machine (yours for this demo) , fetch and install [Git for windows](https://github.com/git-for-windows/git/releases/download/v2.26.0.windows.1/Git-2.26.0-64-bit.exe "https://github.com/git-for-windows/git/releases/download/v2.26.0.windows.1/Git-2.26.0-64-bit.exe") (44Mb) wherever you want -
-
--   On the first install screen make sure that "_Window Explorer Integration/Git  **Bash**  here_ "and "_Associate .sh files to be run with bash"_ options are checked
-- For conveniency , uncheck  _Window Explorer Integration/Git  **GUI**  here_  ")
--   Just keep all other options to their default values
--   Unzip the attached file "_relay.zip_" to your desktop - Open the folder and double click on tunnel.sh
--   The password associated to teh key will be asked twice (be careful Ctrl+V will not work in the Git bash window, use right click + paste instead)  
-    Why Twice? one for the relay, and one for the server  (remember there is a jump) - Note that we use the same key for both hops but we could actually use 2 different keys for higher security.  
-    After the second password entry, the terminal will "freeze", (I know this is a bit unusual) there are no indications that you are connected, but if you did not get any error message the tunnel is actually established !
--   Open Firefox : 
-    
--   1.  Click the menu button and select  Preferences.
-    2.  In the  General  panel, go to the  **Network Settings**  section.
-    3.  Click  Settings…. The  **Connection Settings**  dialog will open
-    4.  Select manual proxy config and fill in the option as in the screenshot below (look at the yellow marks)
-   ![firefox setup](/images/firefox.png)
-        
-That's it - Firefox acts  now as if you were in the capeTown local network.
-
-To close the connection just close the terminal window (or press Ctrl+C inside)
-
-if you want to bring firefox back to normal you should go back to its network settings and select the No Proxy option. (next time you activate the tunnel, you simply have to select the manual proxy configuration , the parameters don't need to be entered again. Note that in this setup only firefox is affected, chrome is not.
-
-To reconnect manually :
-Close or Ctrl+C the Git bash window - Do not change anything in firefox, keep the proxy enabled. Right click on the desktop and chose "Git Bash here" to open a new terminal.
-Simply type the following command related to your location e.g. 
-
-    ssh -N karachi
-
-The password will be asked twice as before (this can be improved by using an ssh-agent)
+See the [MyHelp article](https://myhelp.brussels.msf.org/hc/en-us/articles/360007079157-Remote-Access-Via-MSF-Tunnels-for-MSFOCB-Services-Unifield-Nestor-and-so-on-).
