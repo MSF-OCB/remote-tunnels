@@ -41,7 +41,7 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
 
     echo -e "Attempting to connect via ${relay} using port ${port}\n"
 
-    ssh -q -T -N \
+    ssh -T -N \
         -D "${proxy_port}" \
         -i "${key_file}" \
         -F /dev/null \
