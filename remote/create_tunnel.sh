@@ -1,9 +1,10 @@
 #! /usr/bin/env bash
 
-trap cleanup SIGINT SIGHUP
+trap cleanup EXIT
 function cleanup() {
-  rm -rf "${tmp_dir}"
-  exit 1
+  if [ -d "${tmp_dir}" ]; then
+    rm -rf "${tmp_dir}"
+  fi
 }
 
 user="${1}"

@@ -105,10 +105,11 @@ def tunnel_script(data, key_id, key):
     return f"""#! /usr/bin/env bash
 umask 0077
 
-trap cleanup SIGINT
+trap cleanup EXIT
 function cleanup() {{
-  rm -rf "${{tmp_dir}}"
-  exit 1
+  if [ -d "${{tmp_dir}}" ]; then
+    rm -rf "${{tmp_dir}}"
+  fi
 }}
 
 tmp_dir=$(mktemp -d)
