@@ -5,7 +5,16 @@ function cleanup() {
   if [ -d "${tmp_dir}" ]; then
     rm -rf "${tmp_dir}"
   fi
+  if [ ! -z "${SSH_AGENT_PID}" ]; then
+    kill ${SSH_AGENT_PID}
+  fi
 }
+
+SSHAGENT=$(which ssh-agent 2>/dev/null)
+SSHAGENTARGS="-s"
+if [ -z "${SSH_AUTH_SOCK}" ] && [ -x "${SSHAGENT}" ]; then
+  eval $(${SSHAGENT} ${SSHAGENTARGS})
+fi
 
 user="${1}"
 key_file="${2}"
