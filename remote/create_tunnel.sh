@@ -58,6 +58,12 @@ echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${d
   # We make 6 connection attempts, each with a connection timeout of 360 seconds (= 6 min)
 #  ssh-add -t 40m ${key_file}
 #fi
+ssh_common_options="-o ServerAliveInterval=10 \
+                    -o ServerAliveCountMax=5 \
+                    -o ConnectTimeout=360 \
+                    -o LogLevel=ERROR \
+                    -o AddKeysToAgent=yes"
+ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window open. When finished, press control + c to close the tunnel."
 
 for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
   for port in 22 80 443; do
@@ -68,18 +74,17 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
         -D "${proxy_port}" \
         -i "${key_file}" \
         -F /dev/null \
+        ${ssh_common_options} \
         -o "ExitOnForwardFailure=yes" \
-        -o "ServerAliveInterval=10" \
-        -o "ServerAliveCountMax=5" \
-        -o "ConnectTimeout=360" \
         -o "StrictHostKeyChecking=no" \
         -o "UserKnownHostsFile=/dev/null" \
-        -o "AddKeysToAgent=yes" \
+        -o "PermitLocalCommand=yes" \
+        -o "LocalCommand=echo -e \"${ssh_succes_msg}\"" \
         -o "ProxyCommand=ssh -W %h:%p \
                              -i ${key_file} \
+                             ${ssh_common_options} \
                              -o StrictHostKeyChecking=yes \
                              -o UserKnownHostsFile=${known_hosts_file} \
-                             -o AddKeysToAgent=yes \
                              -p ${port} \
                              tunneller@${relay}" \
         -p "${dest_port}" \
@@ -94,4 +99,6 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
   done
 done
 
+echo -e "\nNo more servers, please contact your IT support if the problem persists."
+sleep 60 & wait
 
