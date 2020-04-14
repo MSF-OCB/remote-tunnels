@@ -11,6 +11,7 @@ function cleanup() {
   if [ "${ssh_agent_launched}" = true ] && [ ! -z "${SSH_AGENT_PID}" ]; then
     kill ${SSH_AGENT_PID}
   elif [ ! -z "${SSH_AGENT_PID}" ]; then
+    # Clear all identities from the running ssh-agent
     ssh-add -D
   fi
 }
@@ -52,6 +53,8 @@ echo -e "You will be tunnelled until you close this window\n"
 echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}\n"
 
 if [ ! -z "${SSH_AGENT_PID}" ]; then
+  # Add the key with a 40 minute lifetime
+  # We make 6 connection attempts, each with a connection timeout of 360 seconds (= 6 min)
   ssh-add -t 40m ${key_file}
 fi
 
