@@ -27,6 +27,7 @@ user="${1}"
 key_file="${2}"
 dest_port="${3}"
 tmp_dir="${4}"
+proxy_port=9006
 
 if [ -z "${user}" ] || [ -z "${key_file}" ] || [ -z "${dest_port}" ]; then
   echo -e "Got user=\"${user}\", key_file=\"${key_file}\", dest_port=\"${dest_port}\"\n"
@@ -38,7 +39,6 @@ if [ -z "${tmp_dir}" ]; then
   tmp_dir=$(mktemp -d)
 fi
 
-proxy_port=9006
 known_hosts_file="${tmp_dir}/known_hosts"
 
 cat <<EOF > "${known_hosts_file}"
