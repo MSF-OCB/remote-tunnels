@@ -49,7 +49,7 @@ sshrelay2.msf.be,15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41 ssh-ed2551
 EOF
 
 echo -e "\nConnecting to project..."
-echo    "After entering the password nothing will happen - this is OK"
+echo    "You may be asked for the password twice - this is OK"
 echo -e "You will be tunnelled until you close this window\n"
 
 echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}\n"
