@@ -61,7 +61,7 @@ fi
 for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
   for port in 22 80 443; do
 
-    echo -e "Attempting to connect via ${relay} using port ${port}\n"
+    echo -e "Connecting via ${relay} using port ${port}\n"
 
     ssh -T -N \
         -D "${proxy_port}" \
