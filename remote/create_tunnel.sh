@@ -52,11 +52,11 @@ echo -e "You will be tunnelled until you close this window\n"
 
 echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}\n"
 
-if [ ! -z "${SSH_AGENT_PID}" ]; then
+#if [ ! -z "${SSH_AGENT_PID}" ]; then
   # Add the key with a 40 minute lifetime
   # We make 6 connection attempts, each with a connection timeout of 360 seconds (= 6 min)
-  ssh-add -t 40m ${key_file}
-fi
+#  ssh-add -t 40m ${key_file}
+#fi
 
 for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
   for port in 22 80 443; do
