@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+# We can enable this to auto-update git bash before launching the script.
+#git update-git-for-windows -y
+
 trap cleanup EXIT
 function cleanup() {
   if [ -d "${tmp_dir}" ]; then
