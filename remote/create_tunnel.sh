@@ -62,9 +62,9 @@ ssh_common_options="-o ServerAliveInterval=10 \
 ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window open. When finished, press control + c to close the tunnel."
 
 for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
-  for port in 22 80 443; do
+  for relay_port in 22 80 443; do
 
-    echo -e "Connecting via ${relay} using port ${port}\n"
+    echo -e "Connecting via ${relay} using port ${relay_port}\n"
 
     ssh -T -N \
         -D "${proxy_port}" \
@@ -81,7 +81,7 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
                              ${ssh_common_options} \
                              -o StrictHostKeyChecking=yes \
                              -o UserKnownHostsFile=${known_hosts_file} \
-                             -p ${port} \
+                             -p ${relay_port} \
                              tunneller@${relay}" \
         -p "${dest_port}" \
         "${user}@localhost"
