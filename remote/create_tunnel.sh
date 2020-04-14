@@ -59,7 +59,7 @@ ssh_common_options="-o ServerAliveInterval=10 \
                     -o ConnectTimeout=360 \
                     -o LogLevel=ERROR \
                     -o AddKeysToAgent=yes"
-ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window open.\nWhen finished, press control + c to close the tunnel."
+ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window open.\nWhen finished, press control + c (Ctrl-C) to close the tunnel."
 
 for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
   for relay_port in 22 80 443; do
