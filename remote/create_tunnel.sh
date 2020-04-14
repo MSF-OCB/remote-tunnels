@@ -52,6 +52,7 @@ echo -e "You will be tunnelled until you close this window\n"
 
 echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}\n"
 
+# The below seemed to cause issues for some field users.
 #if [ ! -z "${SSH_AGENT_PID}" ]; then
   # Add the key with a 40 minute lifetime
   # We make 6 connection attempts, each with a connection timeout of 360 seconds (= 6 min)
@@ -73,10 +74,12 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
         -o "ConnectTimeout=360" \
         -o "StrictHostKeyChecking=no" \
         -o "UserKnownHostsFile=/dev/null" \
+        -o "AddKeysToAgent=yes" \
         -o "ProxyCommand=ssh -W %h:%p \
                              -i ${key_file} \
                              -o StrictHostKeyChecking=yes \
                              -o UserKnownHostsFile=${known_hosts_file} \
+                             -o AddKeysToAgent=yes \
                              -p ${port} \
                              tunneller@${relay}" \
         -p "${dest_port}" \
