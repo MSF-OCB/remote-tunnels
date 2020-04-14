@@ -8,19 +8,21 @@ function cleanup() {
   if [ -d "${tmp_dir}" ]; then
     rm -rf "${tmp_dir}"
   fi
-  if [ "${ssh_agent_launched}" = true ] && [ ! -z "${SSH_AGENT_PID}" ]; then
-    kill ${SSH_AGENT_PID}
-  elif [ ! -z "${SSH_AGENT_PID}" ]; then
+  if [ ! -z "${SSH_AGENT_PID}" ]; then
     # Clear all identities from the running ssh-agent
     ssh-add -D
+    kill ${SSH_AGENT_PID}
   fi
 }
+
+for i in $(ls tunnel_*.sh); do
+  sed -i -e 's/EXIT$/EXIT HUP/' $i || true
+done
 
 SSHAGENT=$(which ssh-agent 2>/dev/null)
 SSHAGENTARGS="-s"
 if [ -z "${SSH_AUTH_SOCK}" ] && [ -x "${SSHAGENT}" ]; then
   eval $(${SSHAGENT} ${SSHAGENTARGS})
-  ssh_agent_launched=true
 fi
 
 user="${1}"
@@ -52,12 +54,6 @@ echo -e "You will be tunnelled until you close this window\n"
 
 echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}\n"
 
-# The below seemed to cause issues for some field users.
-#if [ ! -z "${SSH_AGENT_PID}" ]; then
-  # Add the key with a 40 minute lifetime
-  # We make 6 connection attempts, each with a connection timeout of 360 seconds (= 6 min)
-#  ssh-add -t 40m ${key_file}
-#fi
 ssh_common_options="-o ServerAliveInterval=10 \
                     -o ServerAliveCountMax=5 \
                     -o ConnectTimeout=360 \

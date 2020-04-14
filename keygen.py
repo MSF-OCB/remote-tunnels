@@ -105,7 +105,7 @@ def tunnel_script(data, key_id, key):
     return f"""#! /usr/bin/env bash
 umask 0077
 
-trap cleanup EXIT
+trap cleanup EXIT HUP
 function cleanup() {{
   if [ -d "${{tmp_dir}}" ]; then
     rm -rf "${{tmp_dir}}"
