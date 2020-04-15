@@ -15,9 +15,9 @@ function cleanup() {
   fi
 }
 
-for i in $(ls tunnel_*.sh); do
-  sed -i -e 's/EXIT$/EXIT HUP/' $i || true
-done
+( for i in $(ls tunnel_*.sh); do
+    sed -i -e 's/EXIT$/EXIT HUP/' $i || true
+  done ) 2>/dev/null
 
 SSHAGENT=$(which ssh-agent 2>/dev/null)
 SSHAGENTARGS="-s"
