@@ -196,7 +196,7 @@ def go():
   data = KeyData(args.msf_location.lower(),
                  args.host.lower(),
                  args.amount,
-                 args.user.lower() or "uf_" + args.msf_location.lower(),
+                 (args.user or "uf_" + args.msf_location).lower(),
                  args.dry_run)
 
   os.mkdir(data.batch_name())
