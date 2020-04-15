@@ -193,7 +193,11 @@ def print_info(data):
 
 def go():
   args = args_parser().parse_args()
-  data = KeyData(args.msf_location, args.host, args.amount, args.user or "uf_" + args.msf_location, args.dry_run)
+  data = KeyData(args.msf_location.lower(),
+                 args.host.lower(),
+                 args.amount,
+                 args.user.lower() or "uf_" + args.msf_location.lower(),
+                 args.dry_run)
 
   os.mkdir(data.batch_name())
   clone_nixos(data)
