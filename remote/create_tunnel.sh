@@ -12,6 +12,7 @@ function cleanup() {
     # Clear all identities from the running ssh-agent
     ssh-add -D
     kill ${SSH_AGENT_PID}
+    unset SSH_AUTH_SOCK
   fi
 }
 
