@@ -97,5 +97,6 @@ for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
 done
 
 echo -e "\nNo more servers, please contact your IT support if the problem persists."
-sleep 60 & wait
+sleep 300 &
+wait
 
