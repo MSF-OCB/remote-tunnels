@@ -62,37 +62,39 @@ ssh_common_options="-o ServerAliveInterval=10 \
                     -o AddKeysToAgent=yes"
 ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window open.\nWhen finished, press control + c (Ctrl-C) to close the tunnel."
 
-for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
-  for relay_port in 22 80 443; do
+for repeat in $(seq 1 4); do
+  for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
+    for relay_port in 22 80 443; do
 
-    echo -e "Connecting via ${relay} using port ${relay_port}\n"
+      echo -e "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
 
-    ssh -T -N \
-        -D "${proxy_port}" \
-        -i "${key_file}" \
-        -F /dev/null \
-        ${ssh_common_options} \
-        -o "ExitOnForwardFailure=yes" \
-        -o "StrictHostKeyChecking=no" \
-        -o "UserKnownHostsFile=/dev/null" \
-        -o "PermitLocalCommand=yes" \
-        -o "LocalCommand=echo -e \"${ssh_succes_msg}\"" \
-        -o "ProxyCommand=ssh -W %h:%p \
-                             -i ${key_file} \
-                             ${ssh_common_options} \
-                             -o StrictHostKeyChecking=yes \
-                             -o UserKnownHostsFile=${known_hosts_file} \
-                             -p ${relay_port} \
-                             tunneller@${relay}" \
-        -p "${dest_port}" \
-        "${user}@localhost"
+      ssh -T -N \
+          -D "${proxy_port}" \
+          -i "${key_file}" \
+          -F /dev/null \
+          ${ssh_common_options} \
+          -o "ExitOnForwardFailure=yes" \
+          -o "StrictHostKeyChecking=no" \
+          -o "UserKnownHostsFile=/dev/null" \
+          -o "PermitLocalCommand=yes" \
+          -o "LocalCommand=echo -e \"${ssh_succes_msg}\"" \
+          -o "ProxyCommand=ssh -W %h:%p \
+                               -i ${key_file} \
+                               ${ssh_common_options} \
+                               -o StrictHostKeyChecking=yes \
+                               -o UserKnownHostsFile=${known_hosts_file} \
+                               -p ${relay_port} \
+                               tunneller@${relay}" \
+          -p "${dest_port}" \
+          "${user}@localhost"
 
-    if [ $? -eq 0 ]; then
-      exit 0
-    else
-      echo -e "\nConnection failed, retrying."
-    fi
+      if [ $? -eq 0 ]; then
+        exit 0
+      else
+        echo -e "\nConnection failed, retrying."
+      fi
 
+    done
   done
 done
 
