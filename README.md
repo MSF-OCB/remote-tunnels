@@ -1,9 +1,9 @@
 ## Generation of a batch of relay keys with passphrases per location
 ### Installation
-1. Install the latest version of Python (at the time of writing, that is [version 3.8.2](https://www.python.org/ftp/python/3.8.2/python-3.8.2-amd64-webinstall.exe)). Make sure that the check box on the first screen of the python installer, asking whether python should be added to your PATH, is checked
+1. Install the latest version of Python (at the time of writing, that is [version 3.8.2](https://www.python.org/ftp/python/3.8.2/python-3.8.2-amd64-webinstall.exe)). Make sure that the check box on the first screen of the python installer, asking whether python should be added to your PATH, is checked.
 2. Download the file `keygen.sh` from this repo and put it on your local hard disk with the same name.
-3. From within Git Bash, go to the directory in which you put the `keygen.sh` file (using the `cd` command) and run`chmod +x keygen.sh` to make the file executable
-4. Add your public ssh key to your github profile by clicking on your profile picture in the top right corner, choosing settings, going to "SSH and GPG keys", and using the green button that says "New SSH key"
+3. From within Git Bash, go to the directory in which you put the `keygen.sh` file (using the `cd` command) and run`chmod +x keygen.sh` to make the file executable.
+4. Add your public ssh key to your github profile by clicking on your profile picture in the top right corner, choosing settings, going to "SSH and GPG keys", and using the green button that says "New SSH key".
 5. Add the following entry to your `.ssh/config` file to be able to connect to github using ssh:
 ```
 Host github.com
@@ -11,6 +11,7 @@ Host github.com
   User git
   Port 443
 ```
+And make sure it comes before any `Host *` section.
 
 Please test the connection to github before proceeding with the script below. To do so, run
 ```
