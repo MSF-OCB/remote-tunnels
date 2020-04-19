@@ -35,7 +35,7 @@ usage: keygen.sh [-h] -l MSF_LOCATION -s HOST [-n AMOUNT] [-u USER] [--dry-run]
 Generate keys and launch script for SSH tunnels.
 
 optional arguments:
-  -h, --help            show this help message and exit
+  -h, --help                               show this help message and exit
   -l MSF_LOCATION, --location MSF_LOCATION The location of the MSF project, e.g. be_bruxelles
   -s HOST, --server HOST                   The remote server to which this key will give access, e.g. benuc002
   -n AMOUNT, --num AMOUNT                  The amount of keys to generate, defaults to 5
