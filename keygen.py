@@ -44,7 +44,7 @@ class KeyData:
     return per_host[self.host]["remote_forward_port"]
 
 def args_parser():
-  def_key_amount=5
+  def_key_amount = 5
   parser = argparse.ArgumentParser(description='Generate keys and launch script for SSH tunnels.')
   parser.add_argument('-l', '--location', type=str,  required=True,  dest='msf_location',
                       help="The location of the MSF project, e.g. be_bruxelles")
@@ -209,5 +209,4 @@ def go():
 
 if __name__ == "__main__":
   go()
-
 
