@@ -102,7 +102,7 @@ def write_tunnel_script(data, key_id, key_file):
     write_lines(script_name, tunnel_script(data, key_id, f.read()))
 
 def tunnel_script(data, key_id, key):
-    return f"""#! /usr/bin/env bash
+  return f"""#! /usr/bin/env bash
 umask 0077
 
 trap cleanup EXIT HUP
