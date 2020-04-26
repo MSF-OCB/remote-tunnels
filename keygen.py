@@ -170,8 +170,8 @@ def update_nixos_keys(data, rel_key_path, pub_keys):
 def commit_nixos_config(data, rel_users_path, rel_keys_path):
   subprocess.run(["git", "-C", data.repo_path(), "add", rel_users_path, rel_keys_path])
   subprocess.run(["git", "-C", data.repo_path(),
-                         "-c", "user.name=\"MSFOCB keygen script\"",
-                         "-c", "user.email=\"msfocb_keygen@ocb.msf.org\"",
+                         "-c", 'user.name="MSFOCB keygen script"',
+                         "-c", 'user.email="msfocb_keygen@ocb.msf.org"',
                          "commit",
                          "--message", f"Commit keygen changes, batch id {data.batch_name()}",
                          "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
