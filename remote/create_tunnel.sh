@@ -92,6 +92,8 @@ for repeat in $(seq 1 4); do
         exit 0
       else
         echo -e "\nConnection failed, retrying."
+        sleep 5 &
+        wait
       fi
 
     done
