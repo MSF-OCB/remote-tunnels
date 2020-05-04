@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import argparse
+import bisect
 import json
 import os
 import secrets
@@ -155,10 +156,10 @@ def update_nixos_users(data, rel_users_path):
   users_path = os.path.join(data.repo_path(), rel_users_path)
   with open(users_path, 'r') as f:
     users = json.load(f)
-  ensure_present(data.user, users["users"]["remote_tunnel"]).sort()
+  ensure_present(data.user, users["users"]["remote_tunnel"])
   per_host = users["users"]["per-host"]
   per_host.setdefault(data.host, dict()).setdefault("enable", list())
-  ensure_present(data.user, per_host[data.host]["enable"]).sort()
+  ensure_present(data.user, per_host[data.host]["enable"])
   with open(users_path, 'w') as f:
     json.dump(users, f, indent=2, sort_keys=True)
 
@@ -179,9 +180,11 @@ def commit_nixos_config(data, rel_users_path, rel_keys_path):
   subprocess.run(["git", "-C", data.repo_path(), "push"] + (["--dry-run"] if data.dry_run else []))
 
 def ensure_present(x, xs):
-  if x not in xs:
-    xs.append(x)
-  return xs
+  xs.sort()
+  ix = bisect.bisect_left(xs, x)
+  if ix == len(xs) or xs[ix] != x:
+    xs.insert(ix, x)
+  return None
 
 def clone_nixos(data):
   subprocess.run(["git", "clone", "git@github.com:MSF-OCB/NixOS.git", data.repo_path()])
