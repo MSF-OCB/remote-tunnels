@@ -4,6 +4,7 @@ import argparse
 import bisect
 import json
 import os
+import re
 import secrets
 import string
 import subprocess
@@ -193,6 +194,30 @@ def print_info(data):
   print(f"\nCreated batch: {data.batch_name()}\n")
   print( "Do not forget to add the keys to keeper!\n")
 
+def validate_data(data):
+  validate_user(data.user)
+  validate_location(data.msf_location)
+
+def validate_location(msf_location):
+  location_pattern = re.compile(r'[a-zA-Z]{2}_[a-zA-Z]{3,}')
+  if not bool(location_pattern.fullmatch(msf_location)):
+    raise ValueError(
+f"""Wrong location provided ("{msf_location}"). The location should match the following pattern: {location_pattern.pattern}
+This means that the location should:
+  * Only contain alphabetical characters or underscores
+  * Starts with the two-character ISO country code followed by an underscore
+  * Have a project name which is at least three characters long""")
+
+def validate_user(username):
+  username_pattern = re.compile(r'[a-zA-Z][_a-zA-Z]+[a-zA-Z]')
+  if not bool(username_pattern.fullmatch(username)):
+    raise ValueError(
+f"""Wrong user name provided ("{username}"). The user name should match the following pattern: {username_pattern.pattern}
+This means that the username should:
+  * Only contain alphabetical characters or underscores
+  * Not start or end by an underscore
+  * Be at least three characters long""")
+
 def go():
   args = args_parser().parse_args()
   data = KeyData(args.msf_location.lower(),
@@ -200,6 +225,7 @@ def go():
                  args.amount,
                  (args.user or "uf_" + args.msf_location).lower(),
                  args.dry_run)
+  validate_data(data)
 
   os.mkdir(data.batch_name())
   clone_nixos(data)
