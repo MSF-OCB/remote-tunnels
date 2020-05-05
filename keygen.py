@@ -52,7 +52,7 @@ def args_parser():
                       help="The location of the MSF project, e.g. be_bruxelles")
   parser.add_argument('-s', '--server',   type=str,  required=True,  dest='host',
                       help="The remote server to which this key will give access, e.g. benuc002")
-  parser.add_argument('-n', '--num',      type=int,  required=False, dest='amount', default=def_key_amount, 
+  parser.add_argument('-n', '--num',      type=int,  required=False, dest='amount', default=def_key_amount,
                       help=f"The amount of keys to generate, defaults to {def_key_amount}")
   parser.add_argument('-u', '--user',     type=str,  required=False, dest='user',
                       help="The user that will be used to connect with the generated keys, defaults to \"uf_<msf_location>\"")
@@ -199,24 +199,28 @@ def validate_data(data):
   validate_location(data.msf_location)
 
 def validate_location(msf_location):
-  location_pattern = re.compile(r'[a-zA-Z]{2}_[a-zA-Z]{3,}')
-  if not bool(location_pattern.fullmatch(msf_location)):
-    raise ValueError(
-f"""Wrong location provided ("{msf_location}"). The location should match the following pattern: {location_pattern.pattern}
+  do_validate(msf_location,
+              r'[a-zA-Z]{2}_[a-zA-Z]{3,}',
+"""Wrong location provided ("{input_data}"). The location should match the following pattern: {pattern}
 This means that the location should:
   * Only contain alphabetical characters or underscores
   * Starts with the two-character ISO country code followed by an underscore
   * Have a project name which is at least three characters long""")
 
 def validate_user(username):
-  username_pattern = re.compile(r'[a-zA-Z][_a-zA-Z]+[a-zA-Z]')
-  if not bool(username_pattern.fullmatch(username)):
-    raise ValueError(
-f"""Wrong user name provided ("{username}"). The user name should match the following pattern: {username_pattern.pattern}
+  do_validate(username,
+              r'[a-zA-Z][_a-zA-Z]+[a-zA-Z]',
+"""Wrong user name provided ("{input_data}"). The user name should match the following pattern: {pattern}
 This means that the username should:
   * Only contain alphabetical characters or underscores
   * Not start or end by an underscore
   * Be at least three characters long""")
+
+def do_validate(input_data, regex, message):
+  pattern = re.compile(regex)
+  if not bool(pattern.fullmatch(input_data)):
+    raise ValueError(message.format(input_data = input_data,
+                                    pattern = pattern.pattern))
 
 def go():
   args = args_parser().parse_args()
