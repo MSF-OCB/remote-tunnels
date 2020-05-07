@@ -55,7 +55,7 @@ def args_parser():
   parser.add_argument('-n', '--num',      type=int,  required=False, dest='amount', default=def_key_amount,
                       help=f"The amount of keys to generate, defaults to {def_key_amount}")
   parser.add_argument('-u', '--user',     type=str,  required=False, dest='user',
-                      help="The user that will be used to connect with the generated keys, defaults to \"uf_<msf_location>\"")
+                      help="The user that will be used to connect with the generated keys, defaults to \"tnl_<msf_location>\"")
   parser.add_argument('--dry-run', required=False, dest='dry_run', action='store_true',
                       help="Run the script without making any changes to github")
   return parser
@@ -227,7 +227,7 @@ def go():
   data = KeyData(args.msf_location.lower(),
                  args.host.lower(),
                  args.amount,
-                 (args.user or "uf_" + args.msf_location).lower(),
+                 (args.user or "tnl_" + args.msf_location).lower(),
                  args.dry_run)
   validate_data(data)
 
