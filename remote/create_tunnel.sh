@@ -16,6 +16,22 @@ function cleanup() {
   fi
 }
 
+# Function to rewrite legacy user names to the ones actually used or to correct typos.
+# We do this here because we cannot easily edit the keys that have been deployed to
+# end user machines.
+#
+# The unifield user is not used anymore and neither should the tnl_legacy user.
+# The tnl_legacy user is being phased out, but is currently still used by two
+# projects (Capetown and Karachi).
+function rewrite_username() {
+  local user="${1}"
+  echo "${user}" | \
+    sed -e 's/^uf_/tnl_/' \
+        -e 's/^unifield$/tnl_legacy/' \
+        -e 's/karashi/karachi/' \
+        -e 's/zyhtomyr/zhytomyr/'
+}
+
 ( for i in $(ls tunnel_*.sh); do
     sed -i -e 's/EXIT$/EXIT HUP/' $i || true
   done ) 2>/dev/null
@@ -26,14 +42,15 @@ if [ -z "${SSH_AUTH_SOCK}" ] && [ -x "${SSHAGENT}" ]; then
   eval $(${SSHAGENT} ${SSHAGENTARGS})
 fi
 
-user="${1}"
+orig_user="${1}"
+rewritten_user="$(rewrite_username ${orig_user})"
 key_file="${2}"
 dest_port="${3}"
 tmp_dir="${4}"
 proxy_port=9006
 
-if [ -z "${user}" ] || [ -z "${key_file}" ] || [ -z "${dest_port}" ]; then
-  echo -e "Got user=\"${user}\", key_file=\"${key_file}\", dest_port=\"${dest_port}\"\n"
+if [ -z "${orig_user}" ] || [ -z "${key_file}" ] || [ -z "${dest_port}" ]; then
+  echo -e "Got user=\"${orig_user}\", key_file=\"${key_file}\", dest_port=\"${dest_port}\"\n"
   echo    "Usage: create_tunnel.sh <user> <key_file> <dest_port>"
   exit 1
 fi
@@ -53,8 +70,6 @@ echo -e "\nConnecting to project..."
 echo    "You may be asked for the password twice - this is OK"
 echo -e "You will be tunnelled until you close this window\n"
 
-echo -e "User: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}\n"
-
 ssh_common_options="-o ServerAliveInterval=10 \
                     -o ServerAliveCountMax=5 \
                     -o ConnectTimeout=360 \
@@ -66,6 +81,11 @@ for repeat in $(seq 1 20); do
   for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
     for relay_port in 22 80 443; do
 
+    # TODO: remove this loop once all servers switched to the new user config
+    #       we can then connect just with the rewritten user name
+    for user in "${rewritten_user}" "${orig_user}"; do
+
+      echo -e "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
       echo -e "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
 
       ssh -T -N \
@@ -84,18 +104,21 @@ for repeat in $(seq 1 20); do
                                -o StrictHostKeyChecking=yes \
                                -o UserKnownHostsFile=${known_hosts_file} \
                                -p ${relay_port} \
-                               tunneller@${relay}" \
+                               -l tunneller \
+                               ${relay}" \
           -p "${dest_port}" \
-          "${user}@localhost"
+          -l "${user}" \
+          localhost
 
       if [ $? -eq 0 ]; then
         exit 0
       else
-        echo -e "\nConnection failed, retrying."
+        echo -e "\nConnection failed, retrying.\n"
         sleep 5 &
         wait
       fi
 
+    done
     done
   done
 done
