@@ -67,8 +67,6 @@ sshrelay2.msf.be,15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41 ssh-ed2551
 EOF
 
 echo -e "\nConnecting to project..."
-echo    "You may be asked for the password twice - this is OK"
-echo -e "You will be tunnelled until you close this window\n"
 
 ssh_common_options="-o ServerAliveInterval=10 \
                     -o ServerAliveCountMax=5 \
@@ -87,6 +85,17 @@ for repeat in $(seq 1 20); do
 
       echo -e "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
       echo -e "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
+
+      echo -e "******************************************************************"
+      echo -e "* Instructions to enter the passphrase:                          *"
+      echo -e "*                                                                *"
+      echo -e "* 1. Copy the passphrase for your tunnel key from Keeper         *"
+      echo -e "* 2. Do a right mouse click in this window and select paste,     *"
+      echo -e "*      no characters will be printed, this is normal             *"
+      echo -e "* 3. Press enter to confirm the passphrase                       *"
+      echo -e "*                                                                *"
+      echo -e "* You may be asked to enter the passphrase twice, this is normal *"
+      echo -e "******************************************************************\n"
 
       ssh -T -N \
           -D "${proxy_port}" \
