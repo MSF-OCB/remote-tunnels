@@ -16,6 +16,60 @@ function cleanup() {
   fi
 }
 
+# Function dispatching to the correct platform dependent implementation
+function kill_tunnels() {
+  if [[ "$OSTYPE" == "msys" ]]; then
+    kill_tunnels_msys
+  elif [[ "$OSTYPE" == "linux-gnu"* ]] ||
+       [[ "$OSTYPE" == "cygwin" ]]; then
+    echo -e "\nINFO: detection of running tunnels has"\
+            "not been implemented on this platform (${OSTYPE})."
+  else
+    echo -e "\nWARN: this platform is not supported! (${OSTYPE})"
+  fi
+}
+
+function kill_tunnels_msys {
+  echo "Checking whether a tunnel is already running..."
+
+  pid="$(netstat -ano | grep "[::1]:${proxy_port}" | awk '{ print $5 }')"
+
+  if [[ "${pid}" =~ ^[0-9]+$ ]]; then
+    echo "Killing existing tunnel process..."
+    taskkill -PID "${pid}" -F
+  fi
+}
+
+function print_banner() {
+  do_print_banner \
+    "Instructions to enter the passphrase:" \
+    "1. Copy the passphrase for your tunnel key from Keeper" \
+    "2. Do a right mouse click in this window and select paste," \
+    "   no characters will be printed, this is normal" \
+    "3. Press enter to confirm the passphrase" \
+    "" \
+    "You may be asked to enter the passphrase twice, this is normal"
+}
+
+function do_print_banner() (
+  star_length=70
+  stars="$(printf %-${star_length}s '' | tr ' ' '*')"
+
+  function print_line() {
+    _msg="${1}"
+
+    echo -e "$(printf %-$((star_length - 1))s "* ${_msg}" '*')"
+  }
+
+  echo -e "\n${stars}"
+  print_line ""
+  for msg in "${@}"; do
+    print_line "${msg}"
+  done
+  print_line ""
+  echo -e "${stars}\n"
+)
+
 # Function to rewrite legacy user names to the ones actually used or to correct typos.
 # We do this here because we cannot easily edit the keys that have been deployed to
 # end user machines.
@@ -83,19 +137,11 @@ for repeat in $(seq 1 20); do
     #       we can then connect just with the rewritten user name
     for user in "${rewritten_user}" "${orig_user}"; do
 
-      echo -e "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
-      echo -e "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
+      echo "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
+      echo "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
 
-      echo -e "******************************************************************"
-      echo -e "* Instructions to enter the passphrase:                          *"
-      echo -e "*                                                                *"
-      echo -e "* 1. Copy the passphrase for your tunnel key from Keeper         *"
-      echo -e "* 2. Do a right mouse click in this window and select paste,     *"
-      echo -e "*      no characters will be printed, this is normal             *"
-      echo -e "* 3. Press enter to confirm the passphrase                       *"
-      echo -e "*                                                                *"
-      echo -e "* You may be asked to enter the passphrase twice, this is normal *"
-      echo -e "******************************************************************\n"
+      kill_tunnels
+      print_banner
 
       ssh -T -N \
           -D "${proxy_port}" \
