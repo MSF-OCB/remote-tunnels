@@ -97,7 +97,7 @@ if [ -z "${SSH_AUTH_SOCK}" ] && [ -x "${SSHAGENT}" ]; then
 fi
 
 orig_user="${1}"
-rewritten_user="$(rewrite_username ${orig_user})"
+user="$(rewrite_username ${orig_user})"
 key_file="${2}"
 dest_port="${3}"
 tmp_dir="${4}"
@@ -132,10 +132,6 @@ ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window o
 for repeat in $(seq 1 20); do
   for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
     for relay_port in 22 80 443; do
-
-    # TODO: remove this loop once all servers switched to the new user config
-    #       we can then connect just with the rewritten user name
-    for user in "${rewritten_user}" "${orig_user}"; do
 
       echo "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
       echo "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
@@ -173,7 +169,6 @@ for repeat in $(seq 1 20); do
         wait
       fi
 
-    done
     done
   done
 done
