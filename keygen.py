@@ -188,7 +188,7 @@ def ensure_present(x, xs):
   return None
 
 def clone_nixos(data):
-  subprocess.run(["git", "clone", "git@github.com:MSF-OCB/NixOS.git", data.repo_path()])
+  subprocess.run(["git", "clone", "git@github.com:MSF-OCB/NixOS-OCB-config.git", data.repo_path()])
 
 def print_info(data):
   print(f"\nCreated batch: {data.batch_name()}\n")
