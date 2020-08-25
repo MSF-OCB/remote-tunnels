@@ -39,7 +39,7 @@ class KeyData:
   def port(self):
     if not os.path.isdir(self.repo_path()):
       raise FileNotFoundError("NixOS repo not cloned!")
-    with open(os.path.join(self.repo_path(), "org-spec", "json", "tunnels.json"), 'r') as f:
+    with open(os.path.join(self.repo_path(), "json", "tunnels.json"), 'r') as f:
       tunnels = json.load(f)
     per_host = tunnels["tunnels"]["per-host"]
     assert self.host in per_host, f"The host name {self.host} is not defined in tunnels.json, exiting."
@@ -145,10 +145,10 @@ def tar_files(tar_file_name, *files):
     list(map(tar.add, files))
 
 def update_nixos_config(data, pub_keys):
-  rel_users_path = os.path.join("org-spec", "json", "users.json")
+  rel_users_path = os.path.join("json", "users.json")
   update_nixos_users(data, rel_users_path)
 
-  rel_key_path = os.path.join("org-spec", "keys", data.user)
+  rel_key_path = os.path.join("keys", data.user)
   update_nixos_keys(data, rel_key_path, pub_keys)
 
   commit_nixos_config(data, rel_users_path, rel_key_path)
