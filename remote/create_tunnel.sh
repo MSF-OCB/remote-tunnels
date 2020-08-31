@@ -3,11 +3,11 @@
 # We can enable this to auto-update git bash before launching the script.
 #git update-git-for-windows -y
 
-sshrelay1="sshrelay1.msf.be"
+sshrelay1="sshrelay1.ocb.msf.org"
 sshrelay1_ip="185.199.180.11"
 sshrelay1_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC0ynb9uL4ZD2qT/azc79uYON73GsHlvdyk8zaLY/gHq"
 
-sshrelay2="sshrelay2.msf.be"
+sshrelay2="sshrelay2.ocb.msf.org"
 sshrelay2_ip="15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41"
 sshrelay2_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf"
 
