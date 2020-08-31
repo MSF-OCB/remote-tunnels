@@ -11,7 +11,7 @@ sshrelay2="sshrelay2.ocb.msf.org"
 sshrelay2_ip="15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41"
 sshrelay2_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf"
 
-declare -a relays=("${sshrelay1}" "${sshrelay2}")
+declare -a relays=("${sshrelay2}" "${sshrelay1}")
 declare -a relay_ports=("443" "22" "80")
 
 trap cleanup EXIT
