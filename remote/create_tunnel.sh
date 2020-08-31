@@ -3,6 +3,17 @@
 # We can enable this to auto-update git bash before launching the script.
 #git update-git-for-windows -y
 
+sshrelay1="sshrelay1.msf.be"
+sshrelay1_ip="185.199.180.11"
+sshrelay1_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC0ynb9uL4ZD2qT/azc79uYON73GsHlvdyk8zaLY/gHq"
+
+sshrelay2="sshrelay2.msf.be"
+sshrelay2_ip="15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41"
+sshrelay2_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf"
+
+declare -a relays=("${sshrelay1}" "${sshrelay2}")
+declare -a relay_ports=("443" "22" "80")
+
 trap cleanup EXIT
 function cleanup() {
   if [ -d "${tmp_dir}" ]; then
@@ -22,11 +33,13 @@ function kill_tunnels() {
     kill_tunnels_msys
   elif [[ "$OSTYPE" == "linux-gnu"* ]] ||
        [[ "$OSTYPE" == "cygwin" ]]; then
-    echo -e "\nINFO: detection of running tunnels has"\
+    echo -e "INFO: detection of running tunnels has"\
             "not been implemented on this platform (${OSTYPE})."
   else
-    echo -e "\nWARN: this platform is not supported! (${OSTYPE})"
+    echo -e "WARN: this platform is not supported! (${OSTYPE})"
   fi
+  # Print a newline after this section
+  echo ""
 }
 
 function kill_tunnels_msys {
@@ -61,7 +74,7 @@ function do_print_banner() (
     echo -e "$(printf %-$((star_length - 1))s "* ${_msg}" '*')"
   }
 
-  echo -e "\n${stars}"
+  echo -e "${stars}"
   print_line ""
   for msg in "${@}"; do
     print_line "${msg}"
@@ -116,8 +129,8 @@ fi
 known_hosts_file="${tmp_dir}/known_hosts"
 
 cat <<EOF > "${known_hosts_file}"
-sshrelay1.msf.be,185.199.180.11                                       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC0ynb9uL4ZD2qT/azc79uYON73GsHlvdyk8zaLY/gHq
-sshrelay2.msf.be,15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf
+${sshrelay1},${sshrelay1_ip} ${sshrelay1_key}
+${sshrelay2},${sshrelay2_ip} ${sshrelay2_key}
 EOF
 
 echo -e "\nConnecting to project..."
@@ -130,11 +143,11 @@ ssh_common_options="-o ServerAliveInterval=10 \
 ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window open.\nWhen finished, press control + c (Ctrl-C) to close the tunnel."
 
 for repeat in $(seq 1 20); do
-  for relay in "sshrelay2.msf.be" "sshrelay1.msf.be"; do
-    for relay_port in 22 80 443; do
+  for relay in "${relays[@]}"; do
+    for relay_port in "${relay_ports[@]}"; do
 
-      echo "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
-      echo "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
+      echo    "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
+      echo -e "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
 
       kill_tunnels
       print_banner
