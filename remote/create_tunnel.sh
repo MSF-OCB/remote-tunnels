@@ -152,6 +152,19 @@ for repeat in $(seq 1 20); do
       kill_tunnels
       print_banner
 
+      # Note: we use strict host key checking for the connection from
+      #       the client to the relay (see the ProxyCommand),
+      #       the remote server also uses strict host key checking when
+      #       establishing its tunnel to the relay.
+      #       Therefore, we verify the host keys for both legs of the connection
+      #       (client <-> relay and remote server <-> relay) and
+      #       thus we can safely disable the strict host key checking for the
+      #       connection from the relay to the remote server through the tunnel,
+      #       which is the one established by the main SSH command which connects
+      #       to localhost on the relay.
+      #       By doing so, we avoid having to hard-code the host keys for all
+      #       remote servers in this script.
+
       ssh -T -N \
           -D "${proxy_port}" \
           -i "${key_file}" \
