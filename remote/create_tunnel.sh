@@ -3,15 +3,10 @@
 # We can enable this to auto-update git bash before launching the script.
 #git update-git-for-windows -y
 
-sshrelay1="sshrelay1.ocb.msf.org"
-sshrelay1_ip="185.199.180.11"
-sshrelay1_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC0ynb9uL4ZD2qT/azc79uYON73GsHlvdyk8zaLY/gHq"
+sshrelay="sshrelay.ocb.msf.org"
+sshrelay_ip="15.188.17.148,185.199.180.11,2a05:d012:209:9a00:8e2a:9f6c:53be:df41"
+sshrelay_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf"
 
-sshrelay2="sshrelay2.ocb.msf.org"
-sshrelay2_ip="15.188.17.148,2a05:d012:209:9a00:8e2a:9f6c:53be:df41"
-sshrelay2_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDsn2Dvtzm6jJyL9SJY6D1/lRwhFeWR5bQtSSQv6bZYf"
-
-declare -a relays=("${sshrelay2}" "${sshrelay1}")
 declare -a relay_ports=("443" "22" "80")
 
 trap cleanup EXIT
@@ -129,8 +124,7 @@ fi
 known_hosts_file="${tmp_dir}/known_hosts"
 
 cat <<EOF > "${known_hosts_file}"
-${sshrelay1},${sshrelay1_ip} ${sshrelay1_key}
-${sshrelay2},${sshrelay2_ip} ${sshrelay2_key}
+${sshrelay},${sshrelay_ip} ${sshrelay_key}
 EOF
 
 echo -e "\nConnecting to project..."
@@ -143,59 +137,57 @@ ssh_common_options="-o ServerAliveInterval=10 \
 ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window open.\nWhen finished, press control + c (Ctrl-C) to close the tunnel."
 
 for repeat in $(seq 1 20); do
-  for relay in "${relays[@]}"; do
-    for relay_port in "${relay_ports[@]}"; do
+  for relay_port in "${relay_ports[@]}"; do
 
-      echo    "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
-      echo -e "Connecting via ${relay} using port ${relay_port} (repeat: ${repeat})\n"
+    echo    "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
+    echo -e "Connecting via ${sshrelay} using port ${relay_port} (repeat: ${repeat})\n"
 
-      kill_tunnels
-      print_banner
+    kill_tunnels
+    print_banner
 
-      # Note: we use strict host key checking for the connection from
-      #       the client to the relay (see the ProxyCommand),
-      #       the remote server also uses strict host key checking when
-      #       establishing its tunnel to the relay.
-      #       Therefore, we verify the host keys for both legs of the connection
-      #       (client <-> relay and remote server <-> relay) and
-      #       thus we can safely disable the strict host key checking for the
-      #       connection from the relay to the remote server through the tunnel,
-      #       which is the one established by the main SSH command which connects
-      #       to localhost on the relay.
-      #       By doing so, we avoid having to hard-code the host keys for all
-      #       remote servers in this script.
+    # Note: we use strict host key checking for the connection from
+    #       the client to the relay (see the ProxyCommand),
+    #       the remote server also uses strict host key checking when
+    #       establishing its tunnel to the relay.
+    #       Therefore, we verify the host keys for both legs of the connection
+    #       (client <-> relay and remote server <-> relay) and
+    #       thus we can safely disable the strict host key checking for the
+    #       connection from the relay to the remote server through the tunnel,
+    #       which is the one established by the main SSH command which connects
+    #       to localhost on the relay.
+    #       By doing so, we avoid having to hard-code the host keys for all
+    #       remote servers in this script.
 
-      ssh -T -N \
-          -D "${proxy_port}" \
-          -i "${key_file}" \
-          -F /dev/null \
-          ${ssh_common_options} \
-          -o "ExitOnForwardFailure=yes" \
-          -o "StrictHostKeyChecking=no" \
-          -o "UserKnownHostsFile=/dev/null" \
-          -o "PermitLocalCommand=yes" \
-          -o "LocalCommand=echo -e \"${ssh_succes_msg}\"" \
-          -o "ProxyCommand=ssh -W %h:%p \
-                               -i ${key_file} \
-                               ${ssh_common_options} \
-                               -o StrictHostKeyChecking=yes \
-                               -o UserKnownHostsFile=${known_hosts_file} \
-                               -p ${relay_port} \
-                               -l tunneller \
-                               ${relay}" \
-          -p "${dest_port}" \
-          -l "${user}" \
-          localhost
+    ssh -T -N \
+        -D "${proxy_port}" \
+        -i "${key_file}" \
+        -F /dev/null \
+        ${ssh_common_options} \
+        -o "ExitOnForwardFailure=yes" \
+        -o "StrictHostKeyChecking=no" \
+        -o "UserKnownHostsFile=/dev/null" \
+        -o "PermitLocalCommand=yes" \
+        -o "LocalCommand=echo -e \"${ssh_succes_msg}\"" \
+        -o "ProxyCommand=ssh -W %h:%p \
+                             -i ${key_file} \
+                             ${ssh_common_options} \
+                             -o StrictHostKeyChecking=yes \
+                             -o UserKnownHostsFile=${known_hosts_file} \
+                             -p ${relay_port} \
+                             -l tunneller \
+                             ${sshrelay}" \
+        -p "${dest_port}" \
+        -l "${user}" \
+        localhost
 
-      if [ $? -eq 0 ]; then
-        exit 0
-      else
-        echo -e "\nConnection failed, retrying.\n"
-        sleep 5 &
-        wait
-      fi
+    if [ $? -eq 0 ]; then
+      exit 0
+    else
+      echo -e "\nConnection failed, retrying.\n"
+      sleep 5 &
+      wait
+    fi
 
-    done
   done
 done
 
