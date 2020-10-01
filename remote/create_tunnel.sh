@@ -91,7 +91,9 @@ function rewrite_username() {
     sed -e 's/^uf_/tnl_/' \
         -e 's/^unifield$/tnl_legacy/' \
         -e 's/karashi/karachi/' \
-        -e 's/zyhtomyr/zhytomyr/'
+        -e 's/zyhtomyr/zhytomyr/' \
+        -e 's/ve_coordination/ve_caracas/' \
+        -e 's/ve_caracascentsix/ve_caracas'
 }
 
 ( for i in $(ls tunnel_*.sh); do
