@@ -198,9 +198,12 @@ def validate_data(data):
   validate_user(data.user)
   validate_location(data.msf_location)
 
+def validate_user_pattern():
+  return r'[a-z][-_a-z0-9]+[a-z0-9]'
+
 def validate_location(msf_location):
   do_validate(msf_location,
-              r'[a-z]{2}_[a-z][-_a-z0-9]+[a-z0-9]',
+              r'[a-z]{2}_' + validate_user_pattern(),
 """Wrong location provided ("{input_data}"). The location should match the following pattern: {pattern}
 This means that the location should:
   * Only contain lower-case alphanumerical characters, dashes and underscores
@@ -210,7 +213,7 @@ This means that the location should:
 
 def validate_user(username):
   do_validate(username,
-              r'[a-z][-_a-z0-9]+[a-z0-9]',
+              validate_user_pattern(),
 """Wrong user name provided ("{input_data}"). The user name should match the following pattern: {pattern}
 This means that the username should:
   * Only contain lower-case alphanumerical characters, dashes and underscores
