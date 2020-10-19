@@ -200,20 +200,21 @@ def validate_data(data):
 
 def validate_location(msf_location):
   do_validate(msf_location,
-              r'[a-zA-Z]{2}_[a-zA-Z]{3,}',
+              r'[a-z]{2}_[a-z][-_a-z0-9]+[a-z0-9]',
 """Wrong location provided ("{input_data}"). The location should match the following pattern: {pattern}
 This means that the location should:
-  * Only contain alphabetical characters or underscores
-  * Starts with the two-character ISO country code followed by an underscore
-  * Have a project name which is at least three characters long""")
+  * Only contain lower-case alphanumerical characters, dashes and underscores
+  * Start with the two-character ISO country code followed by an underscore
+  * Following that have a project name which is at least three characters long and starts with a letter
+  * Not end by a dash or an underscore""")
 
 def validate_user(username):
   do_validate(username,
-              r'[a-zA-Z][_a-zA-Z]+[a-zA-Z]',
+              r'[a-z][-_a-z0-9]+[a-z0-9]',
 """Wrong user name provided ("{input_data}"). The user name should match the following pattern: {pattern}
 This means that the username should:
-  * Only contain alphabetical characters or underscores
-  * Not start or end by an underscore
+  * Only contain lower-case alphanumerical characters, dashes and underscores
+  * Not start or end by a dash or an underscore, not start by a number
   * Be at least three characters long""")
 
 def do_validate(input_data, regex, message):
