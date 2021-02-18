@@ -36,6 +36,9 @@ class KeyData:
   def repo_path(self):
     return os.path.join(self.batch_name(), "nixos")
 
+  def branch_name(self):
+    return f"nixos_keygen_script_{self.batch_name()}"
+
   def port(self):
     if not os.path.isdir(self.repo_path()):
       raise FileNotFoundError("NixOS repo not cloned!")
@@ -187,6 +190,7 @@ def update_nixos_keys(data, rel_key_path, pub_keys):
 
 
 def commit_nixos_config(data, rel_users_path, rel_keys_path):
+  subprocess.run(["git", "-C", data.repo_path(), "checkout", "-b", data.branch_name()])
   subprocess.run(["git", "-C", data.repo_path(), "add", rel_users_path, rel_keys_path])
   subprocess.run(["git", "-C", data.repo_path(),
                          "-c", 'user.name="MSFOCB keygen script"',
@@ -194,8 +198,8 @@ def commit_nixos_config(data, rel_users_path, rel_keys_path):
                          "commit",
                          "--message", f"Commit keygen changes, batch id {data.batch_name()}",
                          "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
-  subprocess.run(["git", "-C", data.repo_path(), "pull", "--rebase"])
-  subprocess.run(["git", "-C", data.repo_path(), "push"] + (["--dry-run"] if data.dry_run else []))
+  subprocess.run(["git", "-C", data.repo_path(), "push", "--set-upstream", "origin", data.branch_name()] +
+                 (["--dry-run"] if data.dry_run else []))
 
 
 def ensure_present(x, xs):
@@ -211,8 +215,18 @@ def clone_nixos(data):
 
 
 def print_info(data):
-  print(f"\nCreated batch: {data.batch_name()}\n")
-  print( "Do not forget to add the keys to keeper!\n")
+  green_colour = '\033[92m'
+  blue_colour  = '\033[94m'
+  red_colour   = '\033[93m'
+  underline    = '\033[4m'
+  end_format   = '\033[0m'
+
+  pr_url = f"https://github.com/MSF-OCB/NixOS-OCB-config/pull/new/{data.branch_name()}"
+
+  print(f"\n{green_colour}Created batch: {data.batch_name()}{end_format}\n")
+  print( "Visit the following URL to create a pull request:")
+  print(f"  {blue_colour}{underline}{pr_url}{end_format}\n")
+  print(f"{red_colour}Do not forget to add the keys to keeper!{end_format}\n")
 
 
 def validate_data(data):
