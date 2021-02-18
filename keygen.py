@@ -45,6 +45,7 @@ class KeyData:
     assert self.host in per_host, f"The host name {self.host} is not defined in tunnels.json, exiting."
     return per_host[self.host]["remote_forward_port"]
 
+
 def args_parser():
   def_key_amount = 5
   parser = argparse.ArgumentParser(description='Generate keys and launch script for SSH tunnels.')
@@ -60,19 +61,24 @@ def args_parser():
                       help="Run the script without making any changes to github")
   return parser
 
+
 def generate_passwd():
   alphabet = string.ascii_letters + string.digits
   return ''.join(secrets.choice(alphabet) for i in range(8))
 
+
 def to_csv(length, *strings):
   return ';'.join(list(chain(strings, repeat("", length)))[0:length]) + '\n'
+
 
 def generate_keys(data,):
   return reduce(concat3, map(lambda num: generate_key(data, num),
                              range(1, data.amount + 1)))
 
+
 def concat3(t1, t2):
   return (t1[0] + t2[0], t1[1] + t2[1], t1[2] + t2[2])
+
 
 # Returns a 3-tuple containing the CSV line, the pub key content, and the paths to both key files
 def generate_key(data, num):
@@ -86,9 +92,11 @@ def generate_key(data, num):
           read_pub_key(key_file),
           [key_file, f"{key_file}.pub"])
 
+
 def read_pub_key(key_file):
   with open(f"{key_file}.pub", 'r') as pub:
     return pub.readline(),
+
 
 def do_generate_key(user, passwd, filename, key_id):
   subprocess.run(["ssh-keygen", "-q",
@@ -98,10 +106,12 @@ def do_generate_key(user, passwd, filename, key_id):
                                 "-C", f"{user}_{key_id}",
                                 "-f", filename])
 
+
 def write_tunnel_script(data, key_id, key_file):
   script_name = os.path.join(data.batch_name(), f"tunnel_{key_id}.sh")
   with open(key_file, 'r') as f:
     write_lines(script_name, tunnel_script(data, key_id, f.read()))
+
 
 def tunnel_script(data, key_id, key):
   return f"""#! /usr/bin/env bash
@@ -127,6 +137,7 @@ curl --connect-timeout 90 \\
   bash -s -- "{data.user}" "${{key_file}}" "{data.port()}" "${{tmp_dir}}"\n
 """
 
+
 def write_files(data, csvs, pub_keys, files):
   csv_file_name     = os.path.join(data.batch_name(), f"{data.batch_name()}_index.csv")
   pub_key_file_name = os.path.join(data.batch_name(), f"{data.user}")
@@ -136,13 +147,16 @@ def write_files(data, csvs, pub_keys, files):
   write_lines(pub_key_file_name, *pub_keys)
   tar_files(tar_file_name, csv_file_name, pub_key_file_name, *files)
 
+
 def write_lines(file_name, *lines):
   with open(file_name, 'w+') as f:
     list(map(f.write, lines))
 
+
 def tar_files(tar_file_name, *files):
   with tarfile.open(tar_file_name, "w:gz") as tar:
     list(map(tar.add, files))
+
 
 def update_nixos_config(data, pub_keys):
   rel_users_path = os.path.join("json", "users.json")
@@ -152,6 +166,7 @@ def update_nixos_config(data, pub_keys):
   update_nixos_keys(data, rel_key_path, pub_keys)
 
   commit_nixos_config(data, rel_users_path, rel_key_path)
+
 
 def update_nixos_users(data, rel_users_path):
   users_path = os.path.join(data.repo_path(), rel_users_path)
@@ -164,10 +179,12 @@ def update_nixos_users(data, rel_users_path):
   with open(users_path, 'w') as f:
     json.dump(users, f, indent=2, sort_keys=True)
 
+
 def update_nixos_keys(data, rel_key_path, pub_keys):
   key_path = os.path.join(data.repo_path(), rel_key_path)
   with open(key_path, 'a+') as f:
     list(map(f.write, pub_keys))
+
 
 def commit_nixos_config(data, rel_users_path, rel_keys_path):
   subprocess.run(["git", "-C", data.repo_path(), "add", rel_users_path, rel_keys_path])
@@ -180,6 +197,7 @@ def commit_nixos_config(data, rel_users_path, rel_keys_path):
   subprocess.run(["git", "-C", data.repo_path(), "pull", "--rebase"])
   subprocess.run(["git", "-C", data.repo_path(), "push"] + (["--dry-run"] if data.dry_run else []))
 
+
 def ensure_present(x, xs):
   xs.sort()
   ix = bisect.bisect_left(xs, x)
@@ -187,19 +205,24 @@ def ensure_present(x, xs):
     xs.insert(ix, x)
   return None
 
+
 def clone_nixos(data):
   subprocess.run(["git", "clone", "git@github.com:MSF-OCB/NixOS-OCB-config.git", data.repo_path()])
+
 
 def print_info(data):
   print(f"\nCreated batch: {data.batch_name()}\n")
   print( "Do not forget to add the keys to keeper!\n")
 
+
 def validate_data(data):
   validate_user(data.user)
   validate_location(data.msf_location)
 
+
 def validate_user_pattern():
   return r'[a-z][-_a-z0-9]+[a-z0-9]'
+
 
 def validate_location(msf_location):
   do_validate(msf_location,
@@ -211,6 +234,7 @@ This means that the location should:
   * Following that have a project name which is at least three characters long and starts with a letter
   * Not end by a dash or an underscore""")
 
+
 def validate_user(username):
   do_validate(username,
               validate_user_pattern(),
@@ -220,11 +244,13 @@ This means that the username should:
   * Not start or end by a dash or an underscore, not start by a number
   * Be at least three characters long""")
 
+
 def do_validate(input_data, regex, message):
   pattern = re.compile(regex)
   if not bool(pattern.fullmatch(input_data)):
     raise ValueError(message.format(input_data = input_data,
                                     pattern = pattern.pattern))
+
 
 def go():
   args = args_parser().parse_args()
@@ -242,6 +268,7 @@ def go():
   update_nixos_config(data, pub_keys)
   list(map(os.remove, key_files))
   print_info(data)
+
 
 if __name__ == "__main__":
   go()
