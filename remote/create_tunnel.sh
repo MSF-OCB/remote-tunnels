@@ -96,6 +96,17 @@ function rewrite_username() {
         -e 's/ve_caracascentsix/ve_caracas/'
 }
 
+# Function to rewrite ports when needed.
+# This is mainly used when machines on the field are replaced, because the
+# remote port is hard-coded in the script on the end-users devices.
+#
+# 7020 -> 6033: migration of the EMR system to new hardware.
+function rewrite_port() {
+  local port="${1}"
+  echo "${port}" | \
+    sed -e 's/^7020$/6033/'
+}
+
 ( for i in $(ls tunnel_*.sh); do
     sed -i -e 's/EXIT$/EXIT HUP/' $i || true
   done ) 2>/dev/null
@@ -109,12 +120,13 @@ fi
 orig_user="${1}"
 user="$(rewrite_username ${orig_user})"
 key_file="${2}"
-dest_port="${3}"
+orig_dest_port="${3}"
+dest_port="$(rewrite_port ${orig_dest_port})"
 tmp_dir="${4}"
 proxy_port=9006
 
-if [ -z "${orig_user}" ] || [ -z "${key_file}" ] || [ -z "${dest_port}" ]; then
-  echo -e "Got user=\"${orig_user}\", key_file=\"${key_file}\", dest_port=\"${dest_port}\"\n"
+if [ -z "${orig_user}" ] || [ -z "${key_file}" ] || [ -z "${orig_dest_port}" ]; then
+  echo -e "Got user=\"${orig_user}\", key_file=\"${key_file}\", dest_port=\"${orig_dest_port}\"\n"
   echo    "Usage: create_tunnel.sh <user> <key_file> <dest_port>"
   exit 1
 fi
