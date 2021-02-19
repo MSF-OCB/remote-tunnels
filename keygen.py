@@ -14,6 +14,15 @@ import time
 from dataclasses import dataclass
 from functools   import reduce
 from itertools   import repeat, chain
+from subprocess  import CalledProcessError, PIPE
+
+
+GREEN      = '\033[92m'
+BLUE       = '\033[94m'
+WARNING    = '\033[93m'
+UNDERLINE  = '\033[4m'
+END_FORMAT = '\033[0m'
+
 
 @dataclass(frozen=True)
 class KeyData:
@@ -190,16 +199,29 @@ def update_nixos_keys(data, rel_key_path, pub_keys):
 
 
 def commit_nixos_config(data, rel_users_path, rel_keys_path):
-  subprocess.run(["git", "-C", data.repo_path(), "checkout", "-b", data.branch_name()])
-  subprocess.run(["git", "-C", data.repo_path(), "add", rel_users_path, rel_keys_path])
+  message = f"Commit keygen changes, batch id {data.batch_name()}"
+  subprocess.run(["git", "-C", data.repo_path(), "checkout", "-b", data.branch_name()],
+                 check=True)
+  subprocess.run(["git", "-C", data.repo_path(), "add", rel_users_path, rel_keys_path],
+                 check=True)
   subprocess.run(["git", "-C", data.repo_path(),
                          "-c", 'user.name="MSFOCB keygen script"',
                          "-c", 'user.email="msfocb_keygen@ocb.msf.org"',
                          "commit",
-                         "--message", f"Commit keygen changes, batch id {data.batch_name()}",
-                         "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
+                         "--message", message,
+                         "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"],
+                 check=True)
   subprocess.run(["git", "-C", data.repo_path(), "push", "--set-upstream", "origin", data.branch_name()] +
-                 (["--dry-run"] if data.dry_run else []))
+                 (["--dry-run"] if data.dry_run else []),
+                 check=True)
+  if not data.dry_run:
+    subprocess.run(["gh", "pr", "create",
+                    "--title", message,
+                    "--body", "",
+                    "--head", data.branch_name(),
+                    "--base", "master"],
+                   cwd=data.repo_path(),
+                   check=True)
 
 
 def ensure_present(x, xs):
@@ -215,18 +237,8 @@ def clone_nixos(data):
 
 
 def print_info(data):
-  green_colour = '\033[92m'
-  blue_colour  = '\033[94m'
-  red_colour   = '\033[93m'
-  underline    = '\033[4m'
-  end_format   = '\033[0m'
-
-  pr_url = f"https://github.com/MSF-OCB/NixOS-OCB-config/pull/new/{data.branch_name()}"
-
-  print(f"\n{green_colour}Created batch: {data.batch_name()}{end_format}\n")
-  print( "Visit the following URL to create a pull request:")
-  print(f"  {blue_colour}{underline}{pr_url}{end_format}\n")
-  print(f"{red_colour}Do not forget to add the keys to keeper!{end_format}\n")
+  print(f"\n{GREEN}Successfully created batch: {data.batch_name()}{END_FORMAT}\n")
+  print(f"{WARNING}Do not forget to add the keys to keeper!{END_FORMAT}")
 
 
 def validate_data(data):
@@ -266,22 +278,41 @@ def do_validate(input_data, regex, message):
                                     pattern = pattern.pattern))
 
 
-def go():
-  args = args_parser().parse_args()
-  data = KeyData(args.msf_location.lower(),
-                 args.host.lower(),
-                 args.amount,
-                 (args.user or "tnl_" + args.msf_location).lower(),
-                 args.dry_run)
-  validate_data(data)
+def validate_gh_available():
+  try:
+    cp = subprocess.run(["gh", "auth", "status", "--hostname", "github.com"],
+                        stdout=PIPE, stderr=PIPE, check=True)
+  except FileNotFoundError:
+    print(f"{WARNING}The github CLI is not installed.{END_FORMAT}")
+    print(f"{WARNING}Please install it from {BLUE}https://cli.github.com/{END_FORMAT}")
+    return False
+  except CalledProcessError:
+    print(f"{WARNING}The github CLI is not logged in.{END_FORMAT}")
+    print(f"{WARNING}Please run{END_FORMAT}")
+    print(f"  {GREEN}gh auth login --hostname github.com{END_FORMAT}")
+    print(f"{WARNING}and restart this script.{END_FORMAT}")
+    return False
 
-  os.mkdir(data.batch_name())
-  clone_nixos(data)
-  (csvs, pub_keys, key_files) = generate_keys(data)
-  write_files(data, csvs, pub_keys, key_files)
-  update_nixos_config(data, pub_keys)
-  list(map(os.remove, key_files))
-  print_info(data)
+  return True
+
+
+def go():
+  if validate_gh_available():
+    args = args_parser().parse_args()
+    data = KeyData(args.msf_location.lower(),
+                   args.host.lower(),
+                   args.amount,
+                   (args.user or "tnl_" + args.msf_location).lower(),
+                   args.dry_run)
+    validate_data(data)
+
+    os.mkdir(data.batch_name())
+    clone_nixos(data)
+    (csvs, pub_keys, key_files) = generate_keys(data)
+    write_files(data, csvs, pub_keys, key_files)
+    update_nixos_config(data, pub_keys)
+    list(map(os.remove, key_files))
+    print_info(data)
 
 
 if __name__ == "__main__":
