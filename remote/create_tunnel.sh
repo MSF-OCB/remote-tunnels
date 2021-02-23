@@ -100,11 +100,15 @@ function rewrite_username() {
 # This is mainly used when machines on the field are replaced, because the
 # remote port is hard-coded in the script on the end-users devices.
 #
-# 7020 -> 6033: migration of the EMR system to new hardware.
+# 7020 -> 6033: migration of the EMR system to new hardware in Mumbai.
+# 9002 -> 5004: migration of bevm002 to belt004.
+# 9005 -> 5005: migration of bevm005 to belt005.
 function rewrite_port() {
   local port="${1}"
   echo "${port}" | \
-    sed -e 's/^7020$/6033/'
+    sed -e 's/^7020$/6033/' \
+        -e 's/^9002$/5004/' \
+        -e 's/^9005$/5005/'
 }
 
 ( for i in $(ls tunnel_*.sh); do
