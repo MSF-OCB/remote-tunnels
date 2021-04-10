@@ -147,7 +147,8 @@ EOF
 
 echo -e "\nConnecting to project..."
 
-ssh_common_options="-o ServerAliveInterval=10 \
+ssh_common_options="-F none \
+                    -o ServerAliveInterval=10 \
                     -o ServerAliveCountMax=5 \
                     -o ConnectTimeout=360 \
                     -o LogLevel=ERROR \
@@ -177,9 +178,8 @@ for repeat in $(seq 1 20); do
     #       remote servers in this script.
 
     ssh -T -N \
-        -D "${proxy_port}" \
+        -D "localhost:${proxy_port}" \
         -i "${key_file}" \
-        -F /dev/null \
         ${ssh_common_options} \
         -o "ExitOnForwardFailure=yes" \
         -o "StrictHostKeyChecking=no" \
