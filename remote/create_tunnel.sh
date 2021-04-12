@@ -51,7 +51,7 @@ function kill_tunnels_msys {
 function print_banner() {
   do_print_banner \
     "Instructions to enter the passphrase:" \
-    "1. Copy the passphrase for your tunnel key from Keeper" \
+    "1. Copy the passphrase for your tunnel key from 1Password" \
     "2. Do a right mouse click in this window and select paste," \
     "   no characters will be printed, this is normal" \
     "3. Press enter to confirm the passphrase" \
