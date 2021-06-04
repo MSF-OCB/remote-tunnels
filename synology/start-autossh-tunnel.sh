@@ -10,6 +10,12 @@ if [ -z "${relay_port}" ] || [ -z "${relay}" ] || [ -z "${priv_key}" ]; then
   exit 1
 fi
 
+echo "Waiting for autossh to become available..."
+
+while [ ! -x /usr/local/bin/autossh ]; do
+  sleep 10
+done
+
 echo "Starting tunnel..."
 
 /usr/local/bin/autossh \
