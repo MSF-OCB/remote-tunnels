@@ -12,7 +12,7 @@ fi
 
 echo "Starting tunnel..."
 
-autossh \
+/usr/local/bin/autossh \
   -M 0 \
   -T -N \
   -o "ExitOnForwardFailure=yes" \
