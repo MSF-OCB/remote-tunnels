@@ -25,7 +25,7 @@ echo "Starting tunnel..."
   -o "ServerAliveInterval=10" \
   -o "ServerAliveCountMax=5" \
   -o "ConnectTimeout=360" \
-  -o "UpdateHostKeys=no" \
+  -o "UpdateHostKeys=yes" \
   -o "StrictHostKeyChecking=yes" \
   -o "UserKnownHostsFile=/root/.ssh/known_hosts" \
   -o "IdentitiesOnly=yes" \
