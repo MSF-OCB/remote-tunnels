@@ -31,49 +31,42 @@ EOF
 echo "Waiting for autossh to become available..."
 
 while [ ! -x /usr/local/bin/autossh ]; do
-  sleep 10
+ sleep 10
 done
 
 echo "Starting tunnel to Server..."
 
 ssh_common_options="-F none \
-                    -o ServerAliveInterval=10 \
-                    -o ServerAliveCountMax=5 \
-                    -o ConnectTimeout=360 \
-                    -o LogLevel=ERROR \
-                    -o AddKeysToAgent=yes"
-                    
-for repeat in $(seq 1 20); do
-  for relay_port in "${relay_ports[@]}"; do
-  
+-o ServerAliveInterval=10 \
+-o ServerAliveCountMax=5 \
+-o ConnectTimeout=360 \
+-o LogLevel=ERROR \
+-o AddKeysToAgent=yes"
+                     
 /usr/local/bin/autossh \
-  -M 0 \
-  -N -T \
-  -L 10052:localhost:10051 \
-  ${ssh_common_options} \
-  -i "${priv_key}" \
-  -o "ExitOnForwardFailure=no" \
-  -o ProxyCommand="ssh -W %h:%p \
-                                  -i "${priv_key}" \
-                                  ${ssh_common_options} \
-                                  -o StrictHostKeyChecking=yes \
-                                  -o UserKnownHostsFile=${known_hosts_file} \
-                                  -p ${relay_port} \
-                                  -l tunneller \
-                                  ${sshrelay}" \
-    -o "ExitOnForwardFailure=yes" \
-#     -o "ServerAliveInterval=10" \
-#     -o "ServerAliveCountMax=5" \
-#     -o "ConnectTimeout=360" \
-#     -o "UpdateHostKeys=yes" \
-#     -o "StrictHostKeyChecking=yes" \
-     -o "IdentitiesOnly=yes" \
-     -o "Compression=yes" \
-     -o "ControlMaster=no" \
-     -o "UserKnownHostsFile=/dev/null" \
-     -l zbx_tnl \
-     localhost \
-  -i "${priv_key}" \
-  -p "${zabbix_server_port}"
+-M 0 \
+-N -T \
+-L 10052:localhost:10051 \
+${ssh_common_options} \
+-i "${priv_key}" \
+-o "ExitOnForwardFailure=no" \
+-o ProxyCommand="ssh -W %h:%p \
+-i "${priv_key}" \
+${ssh_common_options} \
+-o StrictHostKeyChecking=yes \
+-o UserKnownHostsFile=${known_hosts_file} \
+-p 22 \
+-l tunneller \
+${sshrelay}" \
+-o "ExitOnForwardFailure=yes" \
+-o "IdentitiesOnly=yes" \
+-o "Compression=yes" \
+-o "ControlMaster=no" \
+-o "StrictHostKeyChecking=no" \
+-o "UserKnownHostsFile=/dev/null" \
+-l zbx_tnl \
+localhost \
+-i "${priv_key}" \
+-p "${zabbix_server_port}"
 
 echo "Stopping the tunnel to Server..."
