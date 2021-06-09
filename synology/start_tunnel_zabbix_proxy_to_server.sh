@@ -54,6 +54,7 @@ AUTOSSH_MAXSTART="10"
 while true; do
   for relay_port in "${relay_ports[@]}"; do
     /usr/local/bin/autossh \
+      -M 0 \
       -T -N \
       -i "${priv_key}" \
       ${ssh_common_options} \
