@@ -193,8 +193,8 @@ def commit_nixos_config(data, rel_users_path, rel_keys_path):
   subprocess.run(["git", "-C", data.repo_path(), "checkout", "-b", data.branch_name()])
   subprocess.run(["git", "-C", data.repo_path(), "add", rel_users_path, rel_keys_path])
   subprocess.run(["git", "-C", data.repo_path(),
-                         "-c", 'user.name="MSFOCB keygen script"',
-                         "-c", 'user.email="msfocb_keygen@ocb.msf.org"',
+                         "-c", 'user.name="OCB NixOS Robot"',
+                         "-c", 'user.email="nixos-ocb@users.noreply.github.com"',
                          "commit",
                          "--message", f"Commit keygen changes, batch id {data.batch_name()}",
                          "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
