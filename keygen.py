@@ -42,7 +42,7 @@ class KeyData:
   def port(self):
     if not os.path.isdir(self.repo_path()):
       raise FileNotFoundError("NixOS repo not cloned!")
-    with open(os.path.join(self.repo_path(), "json", "tunnels.json"), 'r') as f:
+    with open(os.path.join(self.repo_path(), "json", "tunnels.d", "tunnels.json"), 'r') as f:
       tunnels = json.load(f)
     per_host = tunnels["tunnels"]["per-host"]
     assert self.host in per_host, f"The host name {self.host} is not defined in tunnels.json, exiting."
