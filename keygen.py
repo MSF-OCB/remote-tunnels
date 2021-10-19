@@ -98,7 +98,7 @@ def generate_key(data, num):
 
 def read_pub_key(key_file):
   with open(f"{key_file}.pub", 'r') as pub:
-    return pub.readline(),
+    return pub.readline().rstrip(),
 
 
 def do_generate_key(user, passwd, filename, key_id):
@@ -106,7 +106,7 @@ def do_generate_key(user, passwd, filename, key_id):
                                 "-a", "100",
                                 "-t", "ed25519",
                                 "-N", passwd,
-                                "-C", f"{user}_{key_id}",
+                                "-C", "",
                                 "-f", filename])
 
 
@@ -143,12 +143,10 @@ curl --connect-timeout 90 \\
 
 def write_files(data, csvs, pub_keys, files):
   csv_file_name     = os.path.join(data.batch_name(), f"{data.batch_name()}_index.csv")
-  pub_key_file_name = os.path.join(data.batch_name(), f"{data.user}")
   tar_file_name     = os.path.join(data.batch_name(), f"{data.batch_name()}_archive.tar.gz")
 
   write_lines(csv_file_name, to_csv(5, "Key", "Pass", "Location", "User", "Comment"), *csvs)
-  write_lines(pub_key_file_name, *pub_keys)
-  tar_files(tar_file_name, csv_file_name, pub_key_file_name, *files)
+  tar_files(tar_file_name, csv_file_name, *files)
 
 
 def write_lines(file_name, *lines):
@@ -165,10 +163,10 @@ def update_nixos_config(data, pub_keys):
   rel_users_path = os.path.join("json", "users.json")
   update_nixos_users(data, rel_users_path)
 
-  rel_key_path = os.path.join("keys", data.user)
-  update_nixos_keys(data, rel_key_path, pub_keys)
+  rel_keys_path = os.path.join("json", "keys.json")
+  update_nixos_keys(data, rel_keys_path, pub_keys)
 
-  commit_nixos_config(data, rel_users_path, rel_key_path)
+  commit_nixos_config(data, rel_users_path, rel_keys_path)
 
 
 def update_nixos_users(data, rel_users_path):
@@ -183,10 +181,18 @@ def update_nixos_users(data, rel_users_path):
     json.dump(users, f, indent=2, sort_keys=True)
 
 
-def update_nixos_keys(data, rel_key_path, pub_keys):
-  key_path = os.path.join(data.repo_path(), rel_key_path)
-  with open(key_path, 'a+') as f:
-    list(map(f.write, pub_keys))
+def update_nixos_keys(data, rel_keys_path, pub_keys):
+  keys_path = os.path.join(data.repo_path(), rel_keys_path)
+
+  with open(keys_path, 'r') as f:
+    keys = json.load(f)
+
+  keys_dict = keys["keys"]
+  keys_dict.setdefault(data.user, dict()).setdefault("public_keys", list())
+  keys_dict[data.user]["public_keys"].extend(pub_keys)
+
+  with open(keys_path, 'w') as f:
+    json.dump(keys, f, indent=2, sort_keys=True)
 
 
 def commit_nixos_config(data, rel_users_path, rel_keys_path):
