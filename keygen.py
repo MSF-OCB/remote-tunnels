@@ -200,7 +200,7 @@ def commit_nixos_config(data, rel_users_path, rel_keys_path):
   subprocess.run(["git", "-C", data.repo_path(), "add", rel_users_path, rel_keys_path])
   subprocess.run(["git", "-C", data.repo_path(),
                          "-c", 'user.name="OCB NixOS Robot"',
-                         "-c", 'user.email="nixos-ocb@users.noreply.github.com"',
+                         "-c", 'user.email="69807852+nixos-ocb@users.noreply.github.com"',
                          "commit",
                          "--message", f"Commit keygen changes, batch id {data.batch_name()}",
                          "--message", f"(x-nixos:rebuild:relay_port:{data.port()})"])
