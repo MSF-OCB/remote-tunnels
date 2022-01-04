@@ -173,10 +173,9 @@ def update_nixos_users(data, rel_users_path):
   users_path = os.path.join(data.repo_path(), rel_users_path)
   with open(users_path, 'r') as f:
     users = json.load(f)
-  ensure_present(data.user, users["users"]["remote_tunnel"])
   per_host = users["users"]["per-host"]
-  per_host.setdefault(data.host, dict()).setdefault("enable", list())
-  ensure_present(data.user, per_host[data.host]["enable"])
+  per_host.setdefault(data.host, dict()).setdefault("enable", dict())
+  per_host[data.host]["enable"][data.user] = "remoteTunnel"
   with open(users_path, 'w') as f:
     json.dump(users, f, indent=2, sort_keys=True)
 
