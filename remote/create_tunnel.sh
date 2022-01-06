@@ -162,7 +162,11 @@ ssh_succes_msg="\nYou are now connected to the tunnel, please keep this window o
 for repeat in $(seq 1 20); do
   for relay_port in "${relay_ports[@]}"; do
 
-    echo    "Starting tunnel, user: ${user}, key file: $(basename ${key_file}), destination port: ${dest_port}"
+    echo -n "Starting tunnel, "
+    echo -n "user: ${user}, "
+    echo -n "key file: $(basename ${key_file}), "
+    echo -n "destination port: ${dest_port}, "
+    echo    "dynamic proxy port: ${proxy_port}"
     echo -e "Connecting via ${sshrelay} using port ${relay_port} (repeat: ${repeat})\n"
 
     kill_tunnels
