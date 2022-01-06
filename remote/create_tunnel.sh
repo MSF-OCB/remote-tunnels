@@ -127,9 +127,13 @@ key_file="${2}"
 orig_dest_port="${3}"
 dest_port="$(rewrite_port ${orig_dest_port})"
 tmp_dir="${4}"
-proxy_port=9006
+# We allow the default proxy port (9006)
+# to be overwritten using an environment variable
+proxy_port="${remote_tunnel_dynamic_proxy_port:-9006}"
 
-if [ -z "${orig_user}" ] || [ -z "${key_file}" ] || [ -z "${orig_dest_port}" ]; then
+if [ -z "${orig_user}" ] || \
+   [ -z "${key_file}" ] || \
+   [ -z "${orig_dest_port}" ]; then
   echo -e "Got user=\"${orig_user}\", key_file=\"${key_file}\", dest_port=\"${orig_dest_port}\"\n"
   echo    "Usage: create_tunnel.sh <user> <key_file> <dest_port>"
   exit 1
