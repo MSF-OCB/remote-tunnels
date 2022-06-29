@@ -49,11 +49,11 @@
     {
       "name": "Country2 Project1 Server1",
       "port": "2345"
-    }
+    },
     {
       "name": "Country2 Project1 Server2",
       "port": "2345"
-    }
+    },
     {
       "name": "Country2 Project2 Server1",
       "port": "2345"
