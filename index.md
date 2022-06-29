@@ -108,7 +108,7 @@
    <select id="target-selector" onSelect="targetSelected"></select>
   </div>
   <div class="clear">
-   <input type="button" onClick="downloadScript" value="Download script" />
+   <input type="button" onClick="downloadScript()" value="Download script" />
   </div>
  </fieldset>
 </div>
