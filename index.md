@@ -4,7 +4,7 @@ Let's go!
 
 <div id="main-section">
   <input type="text" id="username-input" />
-  <input type="button" click=downloadScript() value="Launch tunnel" />
+  <input type="button" onClick="downloadScript()" value="Launch tunnel" />
 </div>
 
 <script>
