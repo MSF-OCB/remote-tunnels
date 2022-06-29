@@ -71,8 +71,8 @@
    <label for="port-input">Port number:</label>
   </div>
   <div class="column" id="input-column">
-   <input type="text" id="username-input" /><br />
-   <input type="text" id="port-input" /><br />
+   <input type="text" id="username-input" />
+   <input type="text" id="port-input" />
   </div>
   <div class="clear">
    <input type="button" onClick="getConfig()" value="Launch tunnel" />
