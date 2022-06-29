@@ -11,12 +11,25 @@
     var username = sanitise(getInput('username-input'))
     var port     = sanitise(getInput('port-input'))
 
+    var url = 'https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh'
+
     if (username && port) {
-      return '#! /usr/bin/env bash\n\n' +
-             'curl --connect-timeout 90 --retry 5 --location ' +
-             'https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh | ' +
-             'bash -s -- "ramses" "~/.ssh/id_ec" "port" ""'
+      return [ '#! /usr/bin/env bash'
+             , ""
+             , [ 'curl --connect-timeout 90 --retry 5 --location'
+               , url
+               , '|'
+               , 'bash -s --'
+               , quote(username)
+               , quote('~/.ssh/id_ed25519')
+               , quote(port)
+               ].join(" ")
+             ].join("\n")
     }
+  }
+
+  function quote(str) {
+    return '"' + str + '"'
   }
 
   function getInput(inputId) {
@@ -28,19 +41,43 @@
   }
 </script>
 
+<style>
+  label {
+    display: block;
+  }
+  input {
+    display:block;
+  }
+  .column {
+    float:left;
+  }
+  .clear {
+    margin-top: 10px;
+    clear: both;
+  }
+  #input-column {
+    margin-left:10px;
+    padding-left:10px;
+  }
+</style>
+
 ## SSH tunnel portal
 
-Let's go!
-
 <div id="main-section">
- <form>
-  <label for="username-input">User name:</label>
-  <input type="text" id="username-input" /><br />
-
-  <label for="port-input">Port number:</label>
-  <input type="text" id="port-input" /><br />
-
-  <input type="button" onClick="getConfig()" value="Launch tunnel" />
- </form>
+<div id="form-section" class="form-class">
+ <fieldset>
+  <div class="column">
+   <label for="username-input">User name:</label>
+   <label for="port-input">Port number:</label>
+  </div>
+  <div class="column" id="input-column">
+   <input type="text" id="username-input" /><br />
+   <input type="text" id="port-input" /><br />
+  </div>
+  <div class="clear">
+   <input type="button" onClick="getConfig()" value="Launch tunnel" />
+  </div>
+ </fieldset>
+</div>
 </div>
 
