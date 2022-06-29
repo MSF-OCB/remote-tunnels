@@ -1,7 +1,8 @@
 <script>
   function getConfig() {
     var a = document.createElement('a')
-    a.href = 'data:text/plain;charset=UTF8,' + encodeURI(configFromPage())
+    a.href = 'data:text/plain;charset=UTF8,' +
+             encodeURIComponent(configFromPage())
     a.download = 'start_tunnel.sh'
     a.click()
   }
