@@ -1,31 +1,32 @@
 <script>
-  function getConfig() {
+  function downloadScript() {
     var a = document.createElement('a')
-    a.href = 'data:text/plain;charset=UTF8,' +
-             encodeURIComponent(configFromPage())
-    a.download = 'start_tunnel.sh'
-    a.click()
-  }
 
-  function configFromPage() {
     var username = sanitise(getInput('username-input'))
-    var port     = sanitise(getInput('port-input'))
-
-    var url = 'https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh'
+    var port     = sanitise(getInput('target-selector'))
 
     if (username && port) {
-      return [ '#! /usr/bin/env bash'
-             , ""
-             , [ 'curl --connect-timeout 90 --retry 5 --location'
-               , url
-               , '|'
-               , 'bash -s --'
-               , quote(username)
-               , quote('~/.ssh/id_ed25519')
-               , quote(port)
-               ].join(" ")
-             ].join("\n")
+      script = generateScript(username, port)
+      a.href = 'data:text/plain;charset=UTF8,' + encodeURIComponent(script)
+      a.download = 'start_tunnel.sh'
+      a.click()
     }
+  }
+
+  function generateScript(username, port) {
+    var url = 'https://github.com/msf-ocb/remote-tunnels/raw/master/remote/create_tunnel.sh'
+
+    return [ '#! /usr/bin/env bash'
+           , ""
+           , [ 'curl --connect-timeout 90 --retry 5 --location'
+             , url
+             , '|'
+             , 'bash -s --'
+             , quote(username)
+             , quote('~/.ssh/id_ed25519')
+             , quote(port)
+             ].join(" ")
+           ].join("\n")
   }
 
   function quote(str) {
@@ -39,6 +40,38 @@
   function sanitise(str) {
     return str.replace(/[^a-z0-9]+/gi, "_");
   }
+
+  targets = [
+    {
+      "name": "Country1 Project1 Server1",
+      "port" : "1234"
+    },
+    {
+      "name": "Country2 Project1 Server1",
+      "port": "2345"
+    }
+    {
+      "name": "Country2 Project1 Server2",
+      "port": "2345"
+    }
+    {
+      "name": "Country2 Project2 Server1",
+      "port": "2345"
+    }
+  ]
+
+  function populateTargets() {
+    var select = document.getElementById('target-selector')
+    targets.map((target) => {
+      option = document.createElement('option');
+      option.setAttribute('value', target.port);
+      option.appendChild(document.createTextNode(target.name));
+      select.appendChild(option);
+    })
+  }
+
+  window.addEventListener('load', populateTargets);
+
 </script>
 
 <style>
@@ -68,14 +101,14 @@
  <fieldset>
   <div class="column">
    <label for="username-input">User name:</label>
-   <label for="port-input">Port number:</label>
+   <label for="target-selector">Target server:</label>
   </div>
   <div class="column" id="input-column">
    <input type="text" id="username-input" />
-   <input type="text" id="port-input" />
+   <select id="target-selector" onSelect="targetSelected"></select>
   </div>
   <div class="clear">
-   <input type="button" onClick="getConfig()" value="Launch tunnel" />
+   <input type="button" onClick="downloadScript" value="Download script" />
   </div>
  </fieldset>
 </div>
