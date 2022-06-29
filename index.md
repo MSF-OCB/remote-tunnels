@@ -1,12 +1,3 @@
-## SSH tunnel portal
-
-Let's go!
-
-<div id="main-section">
-  <input type="text" id="username-input" />
-  <input type="button" onClick="downloadScript()" value="Launch tunnel" />
-</div>
-
 <script>
   function getConfig() {
     var a = document.createElement('a')
@@ -22,4 +13,13 @@ Let's go!
            'bash -s -- "ramses" "~/.ssh/id_ec" "6012" ""'
   }
 </script>
+
+## SSH tunnel portal
+
+Let's go!
+
+<div id="main-section">
+  <input type="text" id="username-input" />
+  <input type="button" onClick="downloadScript()" value="Launch tunnel" />
+</div>
 
